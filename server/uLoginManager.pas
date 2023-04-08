@@ -12,8 +12,12 @@ type
   TLoginManager = class
   private
     class function GetJwtToken(ASaleId: Integer; AEmail: String): String;
+
   public
     class function Login( ASaleId: Integer; AEmail: String ): TLoginResponse;
+
+    class function GetEmailFromToken: String;
+    class function GetSaleIdFromToken: Integer;
   end;
 
 implementation
@@ -30,10 +34,27 @@ uses
 
   Bcl.Jose.Core.Builder,
   Bcl.Jose.Core.JWT
-
   ;
 
 { TLoginManager }
+
+class function TLoginManager.GetEmailFromToken: String;
+begin
+  Result := '';
+  if TXDataOperationContext.Current.Request.User.Claims.Exists('email') then
+  begin
+    Result := TXDataOperationContext.Current.Request.User.Claims['email'].AsString
+  end;
+end;
+
+class function TLoginManager.GetSaleIdFromToken: Integer;
+begin
+  Result := -1;
+  if TXDataOperationContext.Current.Request.User.Claims.Exists('saleid') then
+  begin
+    Result := TXDataOperationContext.Current.Request.User.Claims['saleid'].AsInteger
+  end;
+end;
 
 class function TLoginManager.GetJwtToken(ASaleId: Integer; AEmail: String): String;
 var
@@ -45,7 +66,6 @@ begin
     LToken.Claims.IssuedAt := TDateTime.NowUtc;
     LToken.Claims.Expiration := TDateTime.NowUTC.IncDay(1);
     LToken.Claims.Issuer := 'YardSale Issuer';
-
 
     LToken.Claims.SetClaimOfType<string>( 'email', AEmail );
     LToken.Claims.SetClaimOfType<integer>( 'saleid', ASaleId );
@@ -76,6 +96,7 @@ begin
   LQuery := TDbController.Shared.GetQuery;
   try
     TSqlGenerator.LoginQuery( LQuery, ASaleId, AEmail );
+
     LQuery.Open;
     if LQuery.FieldByName('valid').AsInteger = 1 then
     begin
@@ -86,7 +107,6 @@ begin
   finally
     LQuery.ReturnToPool;
   end;
-
 end;
 
 end.

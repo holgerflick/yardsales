@@ -24,6 +24,17 @@ type
 
   TCategories = TObjectList<TCategory>;
 
+  TParticipantCategory = class
+  private
+    FId: Integer;
+    FComment: String;
+  public
+    property Id: Integer read FId write FId;
+    property Comment: String read FComment write FComment;
+  end;
+
+  TParticipantCategories = TObjectList<TParticipantCategory>;
+
   TParticipantCore = class
   private
     FName: String;
@@ -44,13 +55,13 @@ type
   TUpdateParticipant = class
   private
     FParticipant: TParticipantCore;
-    FCategories: TCategories;
+    FCategories: TParticipantCategories;
   public
     constructor Create;
     destructor Destroy; override;
 
     property Participant: TParticipantCore read FParticipant write FParticipant;
-    property Categories: TCategories read FCategories write FCategories;
+    property Categories: TParticipantCategories read FCategories write FCategories;
   end;
 
   TNewParticipant = class( TUpdateParticipant )
@@ -79,7 +90,7 @@ implementation
 constructor TUpdateParticipant.Create;
 begin
   FParticipant := TParticipantCore.Create;
-  FCategories := TCategories.Create;
+  FCategories := TParticipantCategories.Create;
 end;
 
 destructor TUpdateParticipant.Destroy;
