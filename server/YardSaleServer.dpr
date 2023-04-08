@@ -1,0 +1,25 @@
+﻿program YardSaleServer;
+
+uses
+  Vcl.Forms,
+  uServerContainer in 'uServerContainer.pas' {ServerContainer: TDataModule},
+  uFrmMain in 'uFrmMain.pas' {FrmMain},
+  uYardSaleService in 'uYardSaleService.pas',
+  uYardSaleServiceImpl in 'uYardSaleServiceImpl.pas',
+  uYardSaleTypes in 'uYardSaleTypes.pas',
+  uParticipantManager in 'uParticipantManager.pas',
+  uLoginManager in 'uLoginManager.pas',
+  uDbController in 'uDbController.pas' {DbController: TDataModule},
+  uServerSettings in 'uServerSettings.pas',
+  uFDCustomQueryHelper in 'uFDCustomQueryHelper.pas',
+  uSqlGenerator in 'uSqlGenerator.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TServerContainer, ServerContainer);
+  Application.CreateForm(TFrmMain, FrmMain);
+  Application.Run;
+end.
