@@ -47,7 +47,7 @@ uses
   uServerSettings,
 
   uDbController,
-  uSqlGenerator
+  uParticipantSqlManager
 
   ;
 
@@ -170,7 +170,7 @@ begin
 
   LQuery := TDbController.Shared.GetQuery;
   try
-    if TSqlGenerator.LoginAdminQuery( LQuery, ALogin, APassword ) then
+    if TParticipantSqlManager.LoginAdminQuery( LQuery, ALogin, APassword ) then
     begin
       Result.Token := GetJwtAdmin;
     end;
@@ -195,7 +195,7 @@ begin
   //       change verification
   LQuery := TDbController.Shared.GetQuery;
   try
-    if TSqlGenerator.LoginParticipantQuery( LQuery, ASaleId, AEmail ) then
+    if TParticipantSqlManager.LoginParticipantQuery( LQuery, ASaleId, AEmail ) then
     begin
       // generate token
       Result.Token := GetJwtParticipant( ASaleId, AEmail );

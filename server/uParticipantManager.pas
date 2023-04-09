@@ -22,7 +22,7 @@ uses
   FireDAC.Comp.Client,
   uFDCustomQueryHelper,
   uDbController,
-  uSqlGenerator
+  uParticipantSqlManager
   ;
 
 
@@ -36,7 +36,7 @@ var
 begin
   LQuery := TDbController.Shared.GetQuery;
   try
-    TSqlGenerator.AddParticipantQuery( LQuery, ANewParticipant );
+    TParticipantSqlManager.AddParticipantQuery( LQuery, ANewParticipant );
     TXDataOperationContext.Current.Response.StatusCode := 204;
   finally
     LQuery.ReturnToPool;

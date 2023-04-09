@@ -6,7 +6,10 @@ uses
 
   Bcl.Json.Attributes,
 
-  System.DateUtils
+  System.DateUtils,
+  System.SysUtils,
+  Vcl.Imaging.jpeg,
+  Classes
   ;
 
 type
@@ -94,12 +97,18 @@ type
     FId: Integer;
     FEventStart: TDateTime;
     FEventEnd: TDateTime;
+    FLogo: TBytes;
+    FTitle: String;
     function GetEventEndEpoch: Integer;
     function GetEventStartEpoch: Integer;
   public
     property Id: Integer read FId write FId;
+
+    property Title: String read FTitle write FTitle;
     property EventStart: TDateTime read FEventStart write FEventStart;
     property EventEnd: TDateTime read FEventEnd write FEventEnd;
+
+    property Logo: TBytes read FLogo write FLogo;
 
     [JsonProperty]
     property EventStartEpoch: Integer read GetEventStartEpoch;
@@ -110,7 +119,14 @@ type
 
   TYardSales = TObjectList<TYardSale>;
 
+  TImageOperations = record
+    class function ResizeImage(AData: TBytes; AWidth: Integer = 500): TBytes; static;
+  end;
+
 implementation
+
+uses
+  Graphics;
 
 { TUpdateParticipant }
 
@@ -138,6 +154,54 @@ end;
 function TYardSale.GetEventStartEpoch: Integer;
 begin
   Result := EventStart.ToUnix;
+end;
+
+{ TImageOperations }
+
+class function TImageOperations.ResizeImage(AData: TBytes; AWidth: Integer = 500): TBytes;
+var
+  LBitmap: TBitmap;
+  LNew,
+  LOriginal: TJpegImage;
+  LStream: TBytesStream;
+
+begin
+  LStream := TBytesStream.Create( AData );
+  LOriginal := nil;
+  LNew := nil;
+  LBitmap := nil;
+  try
+    LOriginal := TJpegImage.Create;
+    LOriginal.LoadFromStream(LStream);
+
+    LNew := TJpegImage.Create;
+
+    // we want the new image to be 500 pixels wide
+    LNew.CompressionQuality := 90;
+
+    LBitmap := TBitmap.Create(
+      AWidth,
+      trunc( LOriginal.Height / ( LOriginal.Width / AWidth ) )
+      );
+
+    LBitmap.Canvas.StretchDraw(Rect(0,0,LBitmap.Width,LBitmap.Height),
+      LOriginal );
+
+    LNew.Assign(LBitmap);
+    LNew.Compress;
+
+    LStream.Clear;
+
+    LNew.SaveToStream(LStream);
+    Result := LStream.Bytes;
+
+  finally
+    LBitmap.Free;
+    LNew.Free;
+    LOriginal.Free;
+    LStream.Free;
+  end;
+
 end;
 
 end.

@@ -107,7 +107,9 @@
         </DCCReference>
         <DCCReference Include="uServerSettings.pas"/>
         <DCCReference Include="uFDCustomQueryHelper.pas"/>
-        <DCCReference Include="uSqlGenerator.pas"/>
+        <DCCReference Include="uParticipantSqlManager.pas"/>
+        <DCCReference Include="uAdminManager.pas"/>
+        <DCCReference Include="uAdminSqlManager.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

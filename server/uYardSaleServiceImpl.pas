@@ -3,6 +3,8 @@
 interface
 
 uses
+  System.SysUtils,
+
   XData.Server.Module,
   XData.Service.Common,
 
@@ -53,9 +55,18 @@ begin
 end;
 
 procedure TYardSaleService.DeleteParticipant;
+var
+  LManager: TParticipantManager;
+
 begin
   TLoginManager.ParticipantOnly;
 
+  LManager := TParticipantManager.Create;
+  try
+    LManager.DeleteParticipant;
+  finally
+    LManager.Free;
+  end;
 end;
 
 function TYardSaleService.GetParticipantCategories(
@@ -63,12 +74,15 @@ function TYardSaleService.GetParticipantCategories(
 begin
   TLoginManager.AdminOnly;
 
+  raise ENotImplemented.Create('Not implemented.');
 end;
 
 function TYardSaleService.GetParticipants(
   SaleId: Integer): TDetailedParticipants;
 begin
   TLoginManager.AdminOnly;
+
+  raise ENotImplemented.Create('Not implemented.');
 end;
 
 function TYardSaleService.GetYardSales: TYardSales;
@@ -78,7 +92,12 @@ var
 begin
   TLoginManager.AdminOnly;
 
-
+  LManager := TAdminManager.Create;
+  try
+    Result := LManager.GetYardSales;
+  finally
+    LManager.Free;
+  end;
 end;
 
 function TYardSaleService.LoginAdmin(Login, Password: String): TLoginResponse;
@@ -110,6 +129,8 @@ end;
 procedure TYardSaleService.UpdateParticipant(Participant: TUpdateParticipant);
 begin
   TLoginManager.ParticipantOnly;
+
+  raise ENotImplemented.Create('Not implemented.');
 end;
 
 initialization

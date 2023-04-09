@@ -12,7 +12,9 @@ uses
   uDbController in 'uDbController.pas' {DbController: TDataModule},
   uServerSettings in 'uServerSettings.pas',
   uFDCustomQueryHelper in 'uFDCustomQueryHelper.pas',
-  uSqlGenerator in 'uSqlGenerator.pas';
+  uParticipantSqlManager in 'uParticipantSqlManager.pas',
+  uAdminManager in 'uAdminManager.pas',
+  uAdminSqlManager in 'uAdminSqlManager.pas';
 
 {$R *.res}
 
