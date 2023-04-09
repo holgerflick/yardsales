@@ -2,7 +2,11 @@
 
 interface
 uses
-  System.Generics.Collections
+  System.Generics.Collections,
+
+  Bcl.Json.Attributes,
+
+  System.DateUtils
   ;
 
 type
@@ -82,6 +86,29 @@ type
     property MapUrl: String read FMapUrl write FMapUrl;
   end;
 
+  TDetailedParticipants = TObjectList<TDetailedParticipant>;
+
+
+  TYardSale = class
+  private
+    FId: Integer;
+    FEventStart: TDateTime;
+    FEventEnd: TDateTime;
+    function GetEventEndEpoch: Integer;
+    function GetEventStartEpoch: Integer;
+  public
+    property Id: Integer read FId write FId;
+    property EventStart: TDateTime read FEventStart write FEventStart;
+    property EventEnd: TDateTime read FEventEnd write FEventEnd;
+
+    [JsonProperty]
+    property EventStartEpoch: Integer read GetEventStartEpoch;
+
+    [JsonProperty]
+    property EventEndEpoch: Integer read GetEventEndEpoch;
+  end;
+
+  TYardSales = TObjectList<TYardSale>;
 
 implementation
 
@@ -99,6 +126,18 @@ begin
   FParticipant.Free;
 
   inherited;
+end;
+
+{ TYardSale }
+
+function TYardSale.GetEventEndEpoch: Integer;
+begin
+  Result := EventEnd.ToUnix;
+end;
+
+function TYardSale.GetEventStartEpoch: Integer;
+begin
+  Result := EventStart.ToUnix;
 end;
 
 end.

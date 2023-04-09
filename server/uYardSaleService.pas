@@ -14,16 +14,31 @@ type
   IYardSaleService = interface(IInvokable)
     ['{7E7BEBC9-2BE3-425E-A579-590C3BE884A0}']
 
-    function Login( SaleId: Integer; Email : String ): TLoginResponse;
+    function LoginAdmin( Login, Password: String ): TLoginResponse;
 
-    [Authorize]
+    function LoginParticipant( SaleId: Integer; Email : String ): TLoginResponse;
+
     procedure AddParticipant( NewParticipant: TNewParticipant );
+
+    // --- Participant operations
 
     [Authorize]
     procedure UpdateParticipant( Participant: TUpdateParticipant );
 
     [Authorize]
     procedure DeleteParticipant;
+
+    // --- Admin operations
+
+    [Authorize]
+    function GetYardSales: TYardSales;
+
+    [Authorize]
+    function GetParticipants( SaleId: Integer ): TDetailedParticipants;
+
+    [Authorize]
+    function GetParticipantCategories(
+      ParticipantId: Integer ): TParticipantCategories;
   end;
 
 implementation

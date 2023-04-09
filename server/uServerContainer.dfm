@@ -9,10 +9,14 @@ object ServerContainer: TServerContainer
   object XDataServer: TXDataServer
     BaseUrl = 'http://+:80/'
     Dispatcher = SparkleHttpSysDispatcher
+    RoutingPrecedence = Service
     EntitySetPermissions = <>
     SwaggerOptions.Enabled = True
+    SwaggerOptions.AuthMode = Jwt
     SwaggerUIOptions.Enabled = True
     SwaggerUIOptions.ShowFilter = True
+    SwaggerUIOptions.DocExpansion = None
+    SwaggerUIOptions.DisplayOperationId = True
     Left = 112
     Top = 104
     object ServerJWT: TSparkleJwtMiddleware

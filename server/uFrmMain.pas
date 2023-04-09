@@ -24,8 +24,10 @@ type
     mmInfo: TMemo;
     btStart: TButton;
     btStop: TButton;
+    btSwagger: TButton;
     procedure btStartClick(ASender: TObject);
     procedure btStopClick(ASender: TObject);
+    procedure btSwaggerClick(Sender: TObject);
     procedure FormCreate(ASender: TObject);
   strict private
     procedure UpdateGUI;
@@ -35,6 +37,10 @@ var
   FrmMain: TFrmMain;
 
 implementation
+
+uses
+  ShellAPI
+  ;
 
 {$R *.dfm}
 
@@ -56,6 +62,13 @@ begin
   UpdateGUI;
 end;
 
+procedure TFrmMain.btSwaggerClick(Sender: TObject);
+begin
+  ShellExecute( self.Handle, 'open',
+    pChar( ServerContainer.XDataServer.BaseUrl.Replace('+', 'localhost') + 'swaggerui' )
+    , '', '', SW_SHOWNORMAL );
+end;
+
 procedure TFrmMain.FormCreate(ASender: TObject);
 begin
   UpdateGUI;
@@ -68,6 +81,7 @@ const
 begin
   btStart.Enabled := not ServerContainer.SparkleHttpSysDispatcher.Active;
   btStop.Enabled := not btStart.Enabled;
+  btSwagger.Enabled := not btStart.Enabled;
   if ServerContainer.SparkleHttpSysDispatcher.Active then
     mmInfo.Lines.Add(SServerStartedAt + StringReplace(
       ServerContainer.XDataServer.BaseUrl,

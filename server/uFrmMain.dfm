@@ -43,4 +43,13 @@ object FrmMain: TFrmMain
     TabOrder = 2
     OnClick = btStopClick
   end
+  object btSwagger: TButton
+    Left = 294
+    Top = 8
+    Width = 137
+    Height = 41
+    Caption = 'Swagger UI'
+    TabOrder = 3
+    OnClick = btSwaggerClick
+  end
 end

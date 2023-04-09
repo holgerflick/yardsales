@@ -1,4 +1,4 @@
-﻿unit uSqlGenerator;
+﻿unit uParticipantSqlManager;
 
 interface
 uses
@@ -11,7 +11,7 @@ uses
 
 
 type
-  TSqlGenerator = class
+  TParticipantSqlManager = class
   public
     class function LoginParticipantQuery( AQuery: TFDQuery;
        ASaleId: Integer; AEmail: String ): Boolean;
@@ -31,9 +31,9 @@ uses
   uLoginManager
   ;
 
-{ TSqlGenerator }
+{ TParticipantSqlManager }
 
-class procedure TSqlGenerator.AddParticipantQuery(AQuery: TFDQuery;
+class procedure TParticipantSqlManager.AddParticipantQuery(AQuery: TFDQuery;
   ANewParticipant: TNewParticipant);
 var
   LParticipantId: Integer;
@@ -80,7 +80,7 @@ begin
   end;
 end;
 
-class procedure TSqlGenerator.DeleteParticipantQuery(AQuery: TFDQuery);
+class procedure TParticipantSqlManager.DeleteParticipantQuery(AQuery: TFDQuery);
 begin
 
 
@@ -91,7 +91,7 @@ begin
   AQuery.ParamByName('Email').AsString := TLoginManager.GetEmailFromToken;
 end;
 
-class function TSqlGenerator.LoginAdminQuery(AQuery: TFDQuery; ALogin,
+class function TParticipantSqlManager.LoginAdminQuery(AQuery: TFDQuery; ALogin,
   APassword: String): Boolean;
 begin
   AQuery.SQL.Text := 'SELECT password AS p FROM Admins WHERE login = :login';
@@ -106,7 +106,7 @@ begin
   end;
 end;
 
-class function TSqlGenerator.LoginParticipantQuery(AQuery: TFDQuery; ASaleId: Integer;
+class function TParticipantSqlManager.LoginParticipantQuery(AQuery: TFDQuery; ASaleId: Integer;
   AEmail: String): Boolean;
 begin
   AQuery.SQL.Text := 'SELECT (COUNT(*) > 0) AS valid FROM SalesParticipant ' +
@@ -119,7 +119,7 @@ begin
   Result := AQuery.FieldByName('valid').AsInteger = 1;
 end;
 
-class procedure TSqlGenerator.UpdateParticipantQuery(AQuery: TFDQuery;
+class procedure TParticipantSqlManager.UpdateParticipantQuery(AQuery: TFDQuery;
   AParticipant: TUpdateParticipant);
 begin
   AQuery.SQL.Text := 'UPDATE SalesParticipant ' +
