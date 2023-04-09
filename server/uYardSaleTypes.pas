@@ -126,7 +126,10 @@ type
 implementation
 
 uses
-  Graphics;
+  Graphics,
+  Wincodec,
+  ComObj,
+  Ole2;
 
 { TUpdateParticipant }
 
@@ -160,48 +163,42 @@ end;
 
 class function TImageOperations.ResizeImage(AData: TBytes; AWidth: Integer = 500): TBytes;
 var
-  LBitmap: TBitmap;
-  LNew,
-  LOriginal: TJpegImage;
   LStream: TBytesStream;
+
+  LWicImage: TWICImage;
+  LScale: IWICBitmapScaler;
+  LWicBitmap: IWICBitmap;
+  LHeight: Integer;
 
 begin
   LStream := TBytesStream.Create( AData );
-  LOriginal := nil;
-  LNew := nil;
-  LBitmap := nil;
+  LWicImage := nil;
+
   try
-    LOriginal := TJpegImage.Create;
-    LOriginal.LoadFromStream(LStream);
+    CoInitialize(nil);
 
-    LNew := TJpegImage.Create;
+    LWicImage := TWICImage.Create;
+    LWicImage.LoadFromStream(LStream);
 
-    // we want the new image to be 500 pixels wide
-    LNew.CompressionQuality := 90;
+    LHeight := trunc( LWicImage.Height / ( LWicImage.Width / AWidth ) );
 
-    LBitmap := TBitmap.Create(
-      AWidth,
-      trunc( LOriginal.Height / ( LOriginal.Width / AWidth ) )
-      );
-
-    LBitmap.Canvas.StretchDraw(Rect(0,0,LBitmap.Width,LBitmap.Height),
-      LOriginal );
-
-    LNew.Assign(LBitmap);
-    LNew.Compress;
+    OleCheck(LWicImage.ImagingFactory.CreateBitmapScaler(LScale));
+    OleCheck(LScale.Initialize(LWicImage.Handle, AWidth, LHeight, WICBitmapInterpolationModeFant));
+    OleCheck(LWicImage.ImagingFactory.CreateBitmapFromSourceRect(LScale, 0, 0, AWidth, LHeight, LWicBitmap));
+    LWicImage.Handle := LWicBitmap;
 
     LStream.Clear;
+    LWicImage.SaveToStream(LStream);
 
-    LNew.SaveToStream(LStream);
     Result := LStream.Bytes;
-
   finally
-    LBitmap.Free;
-    LNew.Free;
-    LOriginal.Free;
+    LWicImage.Free;
     LStream.Free;
-  end;
 
+    CoUninitialize;
+  end;
 end;
+
+
 
 end.
