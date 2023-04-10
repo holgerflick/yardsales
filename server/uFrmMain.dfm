@@ -22,6 +22,12 @@ object FrmMain: TFrmMain
     Width = 537
     Height = 323
     Anchors = [akLeft, akTop, akRight, akBottom]
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentFont = False
     ReadOnly = True
     TabOrder = 0
   end

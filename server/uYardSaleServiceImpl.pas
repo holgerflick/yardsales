@@ -3,13 +3,17 @@
 interface
 
 uses
+  System.Classes,
   System.SysUtils,
 
   XData.Server.Module,
   XData.Service.Common,
 
   uYardSaleTypes,
-  uYardSaleService;
+  uYardSaleService
+
+
+  ;
 
 type
   [ServiceImplementation]
@@ -24,6 +28,7 @@ type
 
     // --- Admin
     function GetYardSales: TYardSales;
+    function GetYardSaleLogo( SaleId: Integer; Width, Height: Integer ): TStream;
     function GetParticipants( SaleId: Integer ): TDetailedParticipants;
     function GetParticipantCategories(
       ParticipantId: Integer ): TParticipantCategories;
@@ -83,6 +88,25 @@ begin
   TLoginManager.AdminOnly;
 
   raise ENotImplemented.Create('Not implemented.');
+end;
+
+function TYardSaleService.GetYardSaleLogo(
+  SaleId,
+  Width,
+  Height: Integer): TStream;
+
+var
+  LManager: TAdminManager;
+
+begin
+  TLoginManager.AdminOnly;
+
+  LManager := TAdminManager.Create;
+  try
+    LManager.GetYardSaleLogo( SaleId, Width, Height );
+  finally
+    LManager.Free;
+  end;
 end;
 
 function TYardSaleService.GetYardSales: TYardSales;

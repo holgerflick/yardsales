@@ -9,7 +9,8 @@ uses
 
   uLoginManager,
   uDbController,
-  uYardSaleTypes
+  uYardSaleTypes,
+  uBitmapTools
   ;
 
 type
@@ -17,6 +18,8 @@ type
 
   public
     function GetYardSales: TYardSales;
+    function GetYardSaleLogo( ASaleId, AWidth, AHeight: Integer ): TBytes;
+
     function GetParticipants( ASaleId: Integer ): TDetailedParticipants;
     function GetParticipantCategories(
       AParticipantId: Integer ): TParticipantCategories;
@@ -25,6 +28,10 @@ type
 implementation
 
 uses
+  XData.Sys.Exceptions,
+
+  System.Math,
+
   FireDAC.Comp.Client,
   uFDCustomQueryHelper,
   uAdminSqlManager,
@@ -44,6 +51,55 @@ end;
 function TAdminManager.GetParticipants(ASaleId: Integer): TDetailedParticipants;
 begin
   raise ENotImplemented.Create('Not implemented.');
+end;
+
+function TAdminManager.GetYardSaleLogo(ASaleId, AWidth,
+  AHeight: Integer): TBytes;
+var
+  LQuery: TFDQuery;
+  LEffValue: Integer;
+  LDim: TBitmapTools.TFixedDimension;
+begin
+  // only one measurement is used. width takes priority.
+  //
+  if ( AWidth = 0 ) and ( AHeight = 0 ) then
+  begin
+    AWidth := 500;
+  end;
+
+  if AWidth <> 0 then
+  begin
+    LEffValue := AWidth;
+    LDim := fdWidth;
+  end
+  else
+  begin
+    LEffValue := AHeight;
+    LDim := fdHeight;
+  end;
+
+  LQuery := TDbController.Shared.GetQuery;
+  try
+    TAdminSqlManager.GetYardSaleLogo( LQuery, ASaleId );
+
+    LQuery.Open;
+    if LQuery.Eof then
+    begin
+      raise EXDataHttpException.Create(404, 'Yard Sale not found.');
+    end;
+
+    if LQuery.FieldByName('logo').IsNull then
+    begin
+      raise EXDataHttpException.Create(404,'Yard Sale has no logo.');
+    end;
+
+    Result := TBitmapTools.Resize(
+      LQuery.FieldByName('logo').AsBytes,
+      LEffValue,
+      LDim );
+  finally
+    LQuery.ReturnToPool;
+  end;
 end;
 
 function TAdminManager.GetYardSales: TYardSales;
@@ -79,7 +135,7 @@ begin
         if LQuery.FieldByName('thumb').IsNull then
         begin
           // generate thumbnail
-          LThumb := TImageOperations.ResizeImage( LQuery.FieldByName('logo').AsBytes );
+          LThumb := TBitmapTools.Resize( LQuery.FieldByName('logo').AsBytes );
 
           // update database
           LQuery.Edit;

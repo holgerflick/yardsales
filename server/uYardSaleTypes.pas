@@ -9,8 +9,6 @@ uses
   System.Classes,
   System.DateUtils,
   System.SysUtils,
-
-  Vcl.Imaging.jpeg
   ;
 
 type
@@ -120,15 +118,8 @@ type
 
   TYardSales = TObjectList<TYardSale>;
 
-  TImageOperations = class
-    class function ResizeImage(AData: TBytes; AWidth: Integer = 500): TBytes; static;
-  end;
-
 implementation
 
-uses
-  Gr32, Gr32_Resamplers,
-  Graphics;
 
 { TUpdateParticipant }
 
@@ -158,79 +149,5 @@ begin
   Result := EventStart.ToUnix;
 end;
 
-{ TImageOperations }
-
-class function TImageOperations.ResizeImage(AData: TBytes;
-  AWidth: Integer = 500): TBytes;
-var
-  LStream: TBytesStream;
-
-  LJpeg: TJpegImage;
-  LImage: TBitmap32;
-
-  LTmpBitmap: TBitmap;
-  LNew: TBitmap32;
-
-  LResampler: TKernelResampler;
-
-  LHeight: Integer;
-begin
-  LJpeg := nil;
-  LImage := nil;
-  LResampler := nil;
-  LNew := nil;
-  LTmpBitmap := nil;
-
-  // read image data into stream
-  LStream := TBytesStream.Create( AData );
-  try
-    // load jpeg into Bitmap32
-    LImage := TBitmap32.Create;
-    LImage.LoadFromStream(LStream);
-
-    // calculate new height
-    LHeight := trunc( LImage.Height / ( LImage.Width / AWidth ) );
-
-    // create new bitmap32 for thumbnail
-    LNew := TBitmap32.Create( AWidth, LHeight );
-
-    // use lanczos kernel for resizing
-    LResampler := TKernelResampler.Create;
-    LResampler.Kernel := TLanczosKernel.Create;
-
-    // helper variables for rect
-    var LNewRect := Rect( 0,0, AWidth, LHeight );
-    var LOrigRect := Rect( 0,0, LImage.Width, LImage.Height );
-
-    // resize the image by drawing it onto the new image canvas
-    // using resampler
-    LResampler.Resample( LNew, LNewRect, LNewRect,
-      LImage, LOrigRect,TDrawMode.dmOpaque, nil);
-
-    // create a new bitmap to load into TJpegImage
-    LTmpBitmap := TBitmap.Create;
-    LTmpBitmap.Assign(LNew);
-
-    // create new jpeg
-    LJpeg := TJpegImage.Create;
-    LJpeg.Assign( LTmpBitmap );
-    LJpeg.CompressionQuality := 90;
-    LJpeg.Compress;
-
-    // save jpeg to stream
-    LStream.Clear;
-    LJpeg.SaveToStream(LStream);
-
-    // return bytes
-    Result := LStream.Bytes;
-  finally
-    LNew.Free;
-    LResampler.Free;  // will also cleanup kernel instance
-    LTmpBitmap.Free;
-    LJpeg.Free;
-    LImage.Free;
-    LStream.Free;
-  end;
-end;
 
 end.

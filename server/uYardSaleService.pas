@@ -5,7 +5,10 @@ interface
 uses
   XData.Security.Attributes,
   XData.Service.Common,
-  uYardSaleTypes
+  uYardSaleTypes,
+
+  System.Classes,
+  System.SysUtils
 
   ;
 
@@ -32,6 +35,11 @@ type
 
     [Authorize]
     function GetYardSales: TYardSales;
+
+    [Authorize]
+    function GetYardSaleLogo(
+      SaleId: Integer;
+      Width, Height: Integer ): TBytes;
 
     [Authorize]
     function GetParticipants( SaleId: Integer ): TDetailedParticipants;
