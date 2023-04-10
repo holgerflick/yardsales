@@ -27,7 +27,9 @@ implementation
 uses
   FireDAC.Comp.Client,
   uFDCustomQueryHelper,
-  uAdminSqlManager
+  uAdminSqlManager,
+  Classes,
+  DB
 
   ;
 
@@ -47,6 +49,7 @@ end;
 function TAdminManager.GetYardSales: TYardSales;
 var
   LQuery: TFDQuery;
+  LThumb: TBytes;
 
 begin
   Result := TYardSales.Create;
@@ -54,9 +57,13 @@ begin
 
   LQuery := TDbController.Shared.GetQuery;
   try
+    // get SQL query
     TAdminSqlManager.GetYardSalesQuery(LQuery);
 
+    // open query
     LQuery.Open;
+
+    // iterate all records
     while not LQuery.Eof do
     begin
       var LSale := TYardSale.Create;
@@ -65,12 +72,34 @@ begin
       LSale.EventEnd := LQuery.FieldByName('EventEnd').AsDateTime;
       LSale.Title := LQuery.FieldByName('title').AsString;
 
+      // do we have a logo?
+      if LQuery.FieldByName('logo').IsNull = False then
+      begin
+        // thumbnail available?
+        if LQuery.FieldByName('thumb').IsNull then
+        begin
+          // generate thumbnail
+          LThumb := TImageOperations.ResizeImage( LQuery.FieldByName('logo').AsBytes );
 
+          // update database
+          LQuery.Edit;
+          LQuery.FieldByName('thumb').AsBytes := LThumb;
+          LQuery.Post;
+        end
+        else
+        begin
+          // use thumbnail
+          LThumb := LQuery.FieldByName('thumb').AsBytes;
+        end;
 
-      LSale.Logo := TImageOperations.ResizeImage(
-        LQuery.FieldByName('logo').AsBytes );
+        // assign thumbnail
+        LSale.Logo := LThumb;
+      end;
 
+      // add to list
       Result.Add( LSale );
+
+      // move to next record
       LQuery.Next;
     end;
   finally

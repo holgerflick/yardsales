@@ -6,10 +6,11 @@ uses
 
   Bcl.Json.Attributes,
 
+  System.Classes,
   System.DateUtils,
   System.SysUtils,
-  Vcl.Imaging.jpeg,
-  Classes
+
+  Vcl.Imaging.jpeg
   ;
 
 type
@@ -119,17 +120,15 @@ type
 
   TYardSales = TObjectList<TYardSale>;
 
-  TImageOperations = record
+  TImageOperations = class
     class function ResizeImage(AData: TBytes; AWidth: Integer = 500): TBytes; static;
   end;
 
 implementation
 
 uses
-  Graphics,
-  Wincodec,
-  ComObj,
-  Ole2;
+  Gr32, Gr32_Resamplers,
+  Graphics;
 
 { TUpdateParticipant }
 
@@ -161,44 +160,77 @@ end;
 
 { TImageOperations }
 
-class function TImageOperations.ResizeImage(AData: TBytes; AWidth: Integer = 500): TBytes;
+class function TImageOperations.ResizeImage(AData: TBytes;
+  AWidth: Integer = 500): TBytes;
 var
   LStream: TBytesStream;
 
-  LWicImage: TWICImage;
-  LScale: IWICBitmapScaler;
-  LWicBitmap: IWICBitmap;
+  LJpeg: TJpegImage;
+  LImage: TBitmap32;
+
+  LTmpBitmap: TBitmap;
+  LNew: TBitmap32;
+
+  LResampler: TKernelResampler;
+
   LHeight: Integer;
-
 begin
+  LJpeg := nil;
+  LImage := nil;
+  LResampler := nil;
+  LNew := nil;
+  LTmpBitmap := nil;
+
+  // read image data into stream
   LStream := TBytesStream.Create( AData );
-  LWicImage := nil;
-
   try
-    CoInitialize(nil);
+    // load jpeg into Bitmap32
+    LImage := TBitmap32.Create;
+    LImage.LoadFromStream(LStream);
 
-    LWicImage := TWICImage.Create;
-    LWicImage.LoadFromStream(LStream);
+    // calculate new height
+    LHeight := trunc( LImage.Height / ( LImage.Width / AWidth ) );
 
-    LHeight := trunc( LWicImage.Height / ( LWicImage.Width / AWidth ) );
+    // create new bitmap32 for thumbnail
+    LNew := TBitmap32.Create( AWidth, LHeight );
 
-    OleCheck(LWicImage.ImagingFactory.CreateBitmapScaler(LScale));
-    OleCheck(LScale.Initialize(LWicImage.Handle, AWidth, LHeight, WICBitmapInterpolationModeFant));
-    OleCheck(LWicImage.ImagingFactory.CreateBitmapFromSourceRect(LScale, 0, 0, AWidth, LHeight, LWicBitmap));
-    LWicImage.Handle := LWicBitmap;
+    // use lanczos kernel for resizing
+    LResampler := TKernelResampler.Create;
+    LResampler.Kernel := TLanczosKernel.Create;
 
+    // helper variables for rect
+    var LNewRect := Rect( 0,0, AWidth, LHeight );
+    var LOrigRect := Rect( 0,0, LImage.Width, LImage.Height );
+
+    // resize the image by drawing it onto the new image canvas
+    // using resampler
+    LResampler.Resample( LNew, LNewRect, LNewRect,
+      LImage, LOrigRect,TDrawMode.dmOpaque, nil);
+
+    // create a new bitmap to load into TJpegImage
+    LTmpBitmap := TBitmap.Create;
+    LTmpBitmap.Assign(LNew);
+
+    // create new jpeg
+    LJpeg := TJpegImage.Create;
+    LJpeg.Assign( LTmpBitmap );
+    LJpeg.CompressionQuality := 90;
+    LJpeg.Compress;
+
+    // save jpeg to stream
     LStream.Clear;
-    LWicImage.SaveToStream(LStream);
+    LJpeg.SaveToStream(LStream);
 
+    // return bytes
     Result := LStream.Bytes;
   finally
-    LWicImage.Free;
+    LNew.Free;
+    LResampler.Free;  // will also cleanup kernel instance
+    LTmpBitmap.Free;
+    LJpeg.Free;
+    LImage.Free;
     LStream.Free;
-
-    CoUninitialize;
   end;
 end;
-
-
 
 end.
