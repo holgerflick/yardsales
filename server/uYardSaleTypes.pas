@@ -8,7 +8,7 @@ uses
 
   System.Classes,
   System.DateUtils,
-  System.SysUtils,
+  System.SysUtils
   ;
 
 type
@@ -84,7 +84,9 @@ type
   TDetailedParticipant = class( TParticipantCore )
   private
     FMapUrl: String;
+    FId: Integer;
   public
+    property Id: Integer read FId write FId;
     property MapUrl: String read FMapUrl write FMapUrl;
   end;
 
@@ -148,6 +150,5 @@ function TYardSale.GetEventStartEpoch: Integer;
 begin
   Result := EventStart.ToUnix;
 end;
-
 
 end.

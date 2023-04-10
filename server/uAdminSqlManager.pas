@@ -15,6 +15,8 @@ type
   public
     class procedure GetYardSalesQuery( AQuery: TFDQuery );
     class procedure GetYardSaleLogo( AQuery: TFDQuery; ASaleId: Integer );
+    class procedure GetParticipantsQuery( AQuery: TFDQuery; ASaleId: Integer );
+
   end;
 
 implementation
@@ -24,6 +26,14 @@ uses
   ;
 
 { TAdminSqlManager }
+
+class procedure TAdminSqlManager.GetParticipantsQuery(AQuery: TFDQuery;
+  ASaleId: Integer);
+begin
+  AQuery.SQL.Text := 'SELECT * FROM SalesParticipant WHERE SalesId = :Id ' +
+    'ORDER BY NAME, CITY, STATE';
+  AQuery.ParamByName('Id').AsInteger := ASaleId;
+end;
 
 class procedure TAdminSqlManager.GetYardSaleLogo(AQuery: TFDQuery;
   ASaleId: Integer);

@@ -6,9 +6,10 @@ uses
    ;
 
 type
-  TFixedDimension = ( fdWidth, fdHeight );
-
   TBitmapTools = class
+  type
+    TFixedDimension = ( fdWidth, fdHeight );
+
     class function Resize(
       AData: TBytes;
       AFixedValue: Integer = 500;

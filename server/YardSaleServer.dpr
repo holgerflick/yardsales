@@ -14,7 +14,8 @@ uses
   uFDCustomQueryHelper in 'uFDCustomQueryHelper.pas',
   uParticipantSqlManager in 'uParticipantSqlManager.pas',
   uAdminManager in 'uAdminManager.pas',
-  uAdminSqlManager in 'uAdminSqlManager.pas';
+  uAdminSqlManager in 'uAdminSqlManager.pas',
+  uBitmapTools in 'uBitmapTools.pas';
 
 {$R *.res}
 

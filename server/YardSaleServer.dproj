@@ -110,6 +110,7 @@
         <DCCReference Include="uParticipantSqlManager.pas"/>
         <DCCReference Include="uAdminManager.pas"/>
         <DCCReference Include="uAdminSqlManager.pas"/>
+        <DCCReference Include="uBitmapTools.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

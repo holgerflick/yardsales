@@ -37,7 +37,6 @@ uses
   uAdminSqlManager,
   Classes,
   DB
-
   ;
 
 { TAdminManager }
@@ -49,8 +48,43 @@ begin
 end;
 
 function TAdminManager.GetParticipants(ASaleId: Integer): TDetailedParticipants;
+var
+  LQuery: TFDQuery;
+
 begin
-  raise ENotImplemented.Create('Not implemented.');
+  Result := TDetailedParticipants.Create;
+
+  TXDataOperationContext.Current.Handler.ManagedObjects.Add( Result );
+
+  LQuery := TDbController.Shared.GetQuery;
+  try
+    TAdminSqlManager.GetParticipantsQuery( LQuery, ASaleId );
+
+    LQuery.Open;
+    if LQuery.Eof then
+    begin
+      raise EXDataHttpException.Create(404, 'Yard Sale not found.');
+    end;
+
+    while not LQuery.Eof do
+    begin
+      var LItem := TDetailedParticipant.Create;
+
+      LItem.Id := LQuery.FieldByName('Id').AsInteger;
+      LItem.Name := LQuery.FieldByName('Name').AsString;
+      LItem.Street := LQuery.FieldByName('Street').AsString;
+      LItem.Zip := LQuery.FieldByName('Zip').AsString;
+      LItem.City := LQuery.FieldByName('City').AsString;
+      LItem.State := LQuery.FieldByName('State').AsString;
+      LItem.MapUrl := LQuery.FieldByName('MapUrl').AsString;
+
+      Result.Add(LItem);
+
+      LQuery.Next;
+    end;
+  finally
+    LQuery.ReturnToPool;
+  end;
 end;
 
 function TAdminManager.GetYardSaleLogo(ASaleId, AWidth,

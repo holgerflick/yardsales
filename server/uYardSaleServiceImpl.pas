@@ -28,7 +28,7 @@ type
 
     // --- Admin
     function GetYardSales: TYardSales;
-    function GetYardSaleLogo( SaleId: Integer; Width, Height: Integer ): TStream;
+    function GetYardSaleLogo( SaleId: Integer; Width, Height: Integer ): TBytes;
     function GetParticipants( SaleId: Integer ): TDetailedParticipants;
     function GetParticipantCategories(
       ParticipantId: Integer ): TParticipantCategories;
@@ -84,16 +84,25 @@ end;
 
 function TYardSaleService.GetParticipants(
   SaleId: Integer): TDetailedParticipants;
+var
+  LManager: TAdminManager;
+
 begin
   TLoginManager.AdminOnly;
 
-  raise ENotImplemented.Create('Not implemented.');
+  LManager := TAdminManager.Create;
+  try
+    Result := LManager.GetParticipants(SaleId);
+  finally
+    LManager.Free;
+  end;
+
 end;
 
 function TYardSaleService.GetYardSaleLogo(
   SaleId,
   Width,
-  Height: Integer): TStream;
+  Height: Integer): TBytes;
 
 var
   LManager: TAdminManager;
@@ -103,7 +112,7 @@ begin
 
   LManager := TAdminManager.Create;
   try
-    LManager.GetYardSaleLogo( SaleId, Width, Height );
+    Result := LManager.GetYardSaleLogo( SaleId, Width, Height );
   finally
     LManager.Free;
   end;

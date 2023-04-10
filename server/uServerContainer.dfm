@@ -10,6 +10,7 @@ object ServerContainer: TServerContainer
     BaseUrl = 'http://+:80/'
     Dispatcher = SparkleHttpSysDispatcher
     RoutingPrecedence = Service
+    InstanceLoopHandling = Error
     EntitySetPermissions = <>
     SwaggerOptions.Enabled = True
     SwaggerOptions.AuthMode = Jwt
