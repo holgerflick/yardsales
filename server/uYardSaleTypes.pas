@@ -30,12 +30,11 @@ type
 
   TCategories = TObjectList<TCategory>;
 
-  TParticipantCategory = class
+  TParticipantCategory = class(TCategory)
   private
-    FId: Integer;
+
     FComment: String;
   public
-    property Id: Integer read FId write FId;
     property Comment: String read FComment write FComment;
   end;
 

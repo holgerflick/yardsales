@@ -43,8 +43,36 @@ uses
 
 function TAdminManager.GetParticipantCategories(
   AParticipantId: Integer): TParticipantCategories;
+var
+  LQuery: TFDQuery;
+
 begin
-  raise ENotImplemented.Create('Not implemented.');
+  Result := TParticipantCategories.Create;
+  TXDataOperationContext.Current.Handler.ManagedObjects.Add( Result );
+
+  LQuery := TDbController.Shared.GetQuery;
+  try
+    TAdminSqlManager.GetParticipantCategoriesQuery( LQuery, AParticipantId );
+
+    // we're not going to throw an exception
+    // the list of categories can be empty
+
+    LQuery.Open;
+    while not LQuery.Eof do
+    begin
+      var LItem := TParticipantCategory.Create;
+      LItem.Id := LQuery.FieldByName('Id').AsInteger;
+      LItem.Name := LQuery.FieldByName('Name').AsString;
+      LItem.Comment := LQuery.FieldByName('Comment').AsString;
+
+      // add to list
+      Result.Add(LItem);
+
+      LQuery.Next;
+    end;
+  finally
+    LQuery.ReturnToPool;
+  end;
 end;
 
 function TAdminManager.GetParticipants(ASaleId: Integer): TDetailedParticipants;
@@ -53,7 +81,6 @@ var
 
 begin
   Result := TDetailedParticipants.Create;
-
   TXDataOperationContext.Current.Handler.ManagedObjects.Add( Result );
 
   LQuery := TDbController.Shared.GetQuery;

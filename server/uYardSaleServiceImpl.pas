@@ -76,10 +76,18 @@ end;
 
 function TYardSaleService.GetParticipantCategories(
   ParticipantId: Integer): TParticipantCategories;
+var
+  LManager: TAdminManager;
+
 begin
   TLoginManager.AdminOnly;
 
-  raise ENotImplemented.Create('Not implemented.');
+  LManager := TAdminManager.Create;
+  try
+    Result := LManager.GetParticipantCategories(ParticipantId);
+  finally
+    LManager.Free;
+  end;
 end;
 
 function TYardSaleService.GetParticipants(
@@ -96,7 +104,6 @@ begin
   finally
     LManager.Free;
   end;
-
 end;
 
 function TYardSaleService.GetYardSaleLogo(

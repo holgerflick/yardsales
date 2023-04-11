@@ -16,6 +16,8 @@ type
     class procedure GetYardSalesQuery( AQuery: TFDQuery );
     class procedure GetYardSaleLogo( AQuery: TFDQuery; ASaleId: Integer );
     class procedure GetParticipantsQuery( AQuery: TFDQuery; ASaleId: Integer );
+    class procedure GetParticipantCategoriesQuery( AQuery: TFDQuery;
+      AParticipantId: Integer );
 
   end;
 
@@ -26,6 +28,16 @@ uses
   ;
 
 { TAdminSqlManager }
+
+class procedure TAdminSqlManager.GetParticipantCategoriesQuery(AQuery: TFDQuery;
+  AParticipantId: Integer);
+begin
+  AQuery.SQL.Text :=
+    'SELECT C.ID, C.NAME, P.COMMENT FROM ParticipantItemCategories P '+
+    'LEFT JOIN ItemCategories C ON ( C.Id = P.IdCategory ) '+
+    'WHERE P.IdParticipant = :Id';
+  AQuery.ParamByName('Id').AsInteger := AParticipantId;
+end;
 
 class procedure TAdminSqlManager.GetParticipantsQuery(AQuery: TFDQuery;
   ASaleId: Integer);
