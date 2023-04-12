@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{999CFFA3-B9E2-4C76-BCF4-77BE7558D353}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="server\YardSaleServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="webclient\participant\ParticipantWebClient.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="YardSaleServer">
+        <MSBuild Projects="server\YardSaleServer.dproj"/>
+    </Target>
+    <Target Name="YardSaleServer:Clean">
+        <MSBuild Projects="server\YardSaleServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="YardSaleServer:Make">
+        <MSBuild Projects="server\YardSaleServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ParticipantWebClient">
+        <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj"/>
+    </Target>
+    <Target Name="ParticipantWebClient:Clean">
+        <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ParticipantWebClient:Make">
+        <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="YardSaleServer;ParticipantWebClient"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="YardSaleServer:Clean;ParticipantWebClient:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="YardSaleServer:Make;ParticipantWebClient:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
