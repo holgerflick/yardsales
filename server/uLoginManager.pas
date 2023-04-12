@@ -23,7 +23,7 @@ type
     function GetJwtAdmin: String;
 
   public
-    function LoginParticipant( ASaleId: Integer; AEmail: String ): TLoginResponse;
+    function LoginParticipant( ASaleId: Integer; AEmail, AName, AZip: String ): TLoginResponse;
     function LoginAdmin( ALogin, APassword: String ): TLoginResponse;
 
     class function GetEmailFromToken: String;
@@ -181,7 +181,7 @@ end;
 
 function TLoginManager.LoginParticipant(
   ASaleId: Integer;
-  AEmail: String): TLoginResponse;
+  AEmail, AName, AZip: String): TLoginResponse;
 var
   LQuery: TFDQuery;
 

@@ -19,7 +19,7 @@ type
   [ServiceImplementation]
   TYardSaleService = class(TInterfacedObject, IYardSaleService)
     function LoginAdmin( Login, Password: String ): TLoginResponse;
-    function LoginParticipant( SaleId: Integer; Email : String ): TLoginResponse;
+    function LoginParticipant( SaleId: Integer; Email, Name, Zip : String ): TLoginResponse;
 
     // --- Participant
     procedure AddParticipant( NewParticipant: TNewParticipant );
@@ -168,14 +168,14 @@ begin
   end;
 end;
 
-function TYardSaleService.LoginParticipant(SaleId: Integer; Email: String): TLoginResponse;
+function TYardSaleService.LoginParticipant(SaleId: Integer; Email, Name, Zip: String): TLoginResponse;
 var
   LManager: TLoginManager;
 
 begin
   LManager := TLoginManager.Create;
   try
-    Result := LManager.LoginParticipant( SaleId, Email );
+    Result := LManager.LoginParticipant( SaleId, Email, Name, Zip );
   finally
     LManager.Free;
   end;

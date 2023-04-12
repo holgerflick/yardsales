@@ -18,7 +18,7 @@ type
     ['{7E7BEBC9-2BE3-425E-A579-590C3BE884A0}']
 
     function LoginAdmin( Login, Password: String ): TLoginResponse;
-    function LoginParticipant( SaleId: Integer; Email : String ): TLoginResponse;
+    function LoginParticipant( SaleId: Integer; Email, Name, Zip : String ): TLoginResponse;
 
     procedure AddParticipant( NewParticipant: TNewParticipant );
 

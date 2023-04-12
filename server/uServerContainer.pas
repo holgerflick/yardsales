@@ -16,7 +16,7 @@ uses
 
   XData.Comp.ConnectionPool,
   XData.Server.Module,
-  XData.Comp.Server, Sparkle.Comp.JwtMiddleware
+  XData.Comp.Server, Sparkle.Comp.JwtMiddleware, Sparkle.Comp.CorsMiddleware
   ;
 
 type
@@ -24,6 +24,7 @@ type
     SparkleHttpSysDispatcher: TSparkleHttpSysDispatcher;
     XDataServer: TXDataServer;
     ServerJWT: TSparkleJwtMiddleware;
+    XDataServerCORS: TSparkleCorsMiddleware;
     procedure DataModuleCreate(Sender: TObject);
     procedure ServerJWTGetSecret(Sender: TObject; var Secret: string);
   end;
