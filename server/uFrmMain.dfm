@@ -4,8 +4,9 @@ object FrmMain: TFrmMain
   BorderIcons = [biSystemMenu]
   Caption = 'Yard Sales Server'
   ClientHeight = 386
-  ClientWidth = 553
+  ClientWidth = 444
   Color = clBtnFace
+  Constraints.MinWidth = 460
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -15
@@ -13,13 +14,13 @@ object FrmMain: TFrmMain
   Font.Style = []
   OnCreate = FormCreate
   DesignSize = (
-    553
+    444
     386)
   TextHeight = 18
   object mmInfo: TMemo
     Left = 8
     Top = 55
-    Width = 537
+    Width = 428
     Height = 323
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
@@ -30,6 +31,7 @@ object FrmMain: TFrmMain
     ParentFont = False
     ReadOnly = True
     TabOrder = 0
+    ExplicitWidth = 421
   end
   object btStart: TButton
     Left = 8
@@ -50,12 +52,14 @@ object FrmMain: TFrmMain
     OnClick = btStopClick
   end
   object btSwagger: TButton
-    Left = 294
+    Left = 299
     Top = 8
     Width = 137
     Height = 41
+    Anchors = [akTop, akRight]
     Caption = 'Swagger UI'
     TabOrder = 3
     OnClick = btSwaggerClick
+    ExplicitLeft = 390
   end
 end

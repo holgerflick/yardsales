@@ -11,14 +11,18 @@ uses
 type
   TParticipantManager = class
   public
-    class procedure AddParticipant( ANewParticipant: TNewParticipant );
-    class procedure UpdateParticipant( AParticipant: TUpdateParticipant );
-    class procedure DeleteParticipant;
+    procedure AddParticipant( ANewParticipant: TNewParticipant );
+    procedure UpdateParticipant( AParticipant: TUpdateParticipant );
+    procedure DeleteParticipant;
+
+    function ItemCategories: TItemCategories;
 
   end;
 
 implementation
 uses
+  System.SysUtils,
+
   FireDAC.Comp.Client,
   uFDCustomQueryHelper,
   uDbController,
@@ -28,7 +32,7 @@ uses
 
 { TParticipantManager }
 
-class procedure TParticipantManager.AddParticipant(
+procedure TParticipantManager.AddParticipant(
   ANewParticipant: TNewParticipant);
 var
   LQuery: TFDQuery;
@@ -43,7 +47,7 @@ begin
   end;
 end;
 
-class procedure TParticipantManager.DeleteParticipant;
+procedure TParticipantManager.DeleteParticipant;
 var
   LQuery: TFDQuery;
 
@@ -56,10 +60,40 @@ begin
   end;
 end;
 
-class procedure TParticipantManager.UpdateParticipant(
+function TParticipantManager.ItemCategories: TItemCategories;
+var
+  LQuery: TFDQuery;
+
+begin
+  Result := TItemCategories.Create;
+  TXDataOperationContext.Current.Handler.ManagedObjects.Add(Result);
+
+  LQuery := TDbController.Shared.GetQuery;
+  try
+    TParticipantSqlManager.ItemCategories( LQuery );
+
+    LQuery.Open;
+
+    while not LQuery.Eof do
+    begin
+      var LItem := TItemCategory.Create;
+      LItem.Id := LQuery.FieldByName('Id').AsInteger;
+      LItem.Name := LQuery.FieldByName('Name').AsString;
+
+      Result.Add(LItem);
+
+      LQuery.Next;
+    end;
+
+  finally
+    LQuery.ReturnToPool;
+  end;
+end;
+
+procedure TParticipantManager.UpdateParticipant(
   AParticipant: TUpdateParticipant);
 begin
-
+  raise ENotImplemented.Create('Not implemented');
 end;
 
 end.

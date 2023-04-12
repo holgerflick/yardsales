@@ -19,7 +19,7 @@ type
     property Token: String read FToken write FToken;
   end;
 
-  TCategory = class
+  TItemCategory = class
   private
     FName: String;
     FId: Integer;
@@ -28,9 +28,9 @@ type
     property Name: String read FName write FName;
   end;
 
-  TCategories = TObjectList<TCategory>;
+  TItemCategories = TObjectList<TItemCategory>;
 
-  TParticipantCategory = class(TCategory)
+  TParticipantCategory = class(TItemCategory)
   private
 
     FComment: String;

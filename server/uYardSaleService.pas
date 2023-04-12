@@ -30,6 +30,8 @@ type
     [Authorize]
     procedure DeleteParticipant;
 
+    function ItemCategories: TItemCategories;
+
     // --- Admin operations
 
     [Authorize]

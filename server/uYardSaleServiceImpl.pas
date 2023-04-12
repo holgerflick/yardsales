@@ -26,6 +26,8 @@ type
     procedure UpdateParticipant( Participant: TUpdateParticipant );
     procedure DeleteParticipant;
 
+    function ItemCategories: TItemCategories;
+
     // --- Admin
     function GetYardSales: TYardSales;
     function GetYardSaleLogo( SaleId: Integer; Width, Height: Integer ): TBytes;
@@ -135,6 +137,19 @@ begin
   LManager := TAdminManager.Create;
   try
     Result := LManager.GetYardSales;
+  finally
+    LManager.Free;
+  end;
+end;
+
+function TYardSaleService.ItemCategories: TItemCategories;
+var
+  LManager: TParticipantManager;
+
+begin
+  LManager := TParticipantManager.Create;
+  try
+    Result := LManager.ItemCategories;
   finally
     LManager.Free;
   end;

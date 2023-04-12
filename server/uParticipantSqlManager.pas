@@ -24,6 +24,8 @@ type
     class procedure UpdateParticipantQuery( AQuery: TFDQuery;
       AParticipant: TUpdateParticipant );
     class procedure DeleteParticipantQuery( AQuery: TFDQuery );
+
+    class procedure ItemCategories( LQuery: TFDQuery );
   end;
 
 implementation
@@ -89,6 +91,11 @@ begin
 
   AQuery.ParamByName('SalesId').AsInteger := TLoginManager.GetSaleIdFromToken;
   AQuery.ParamByName('Email').AsString := TLoginManager.GetEmailFromToken;
+end;
+
+class procedure TParticipantSqlManager.ItemCategories(LQuery: TFDQuery);
+begin
+  LQuery.SQL.Text := 'SELECT * FROM ItemCategories';
 end;
 
 class function TParticipantSqlManager.LoginAdminQuery(AQuery: TFDQuery; ALogin,
