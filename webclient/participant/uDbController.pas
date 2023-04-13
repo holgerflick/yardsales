@@ -44,14 +44,14 @@ type
     [async]
     procedure RequestItemCategories;
 
-    [async]
-    procedure RequestYardSaleDetails( ASaleId: Integer );
-
     procedure AssignItemCategories( AResponse: TXDataClientResponse );
     procedure ProcessYardSaleDetails( AResponse: TXDataClientResponse );
   public
     { Public declarations }
     procedure Connect;
+
+    [async]
+    procedure RequestYardSaleDetails( ASaleId: Integer );
 
     property YardSaleDetails: TYardSaleDetails read FDetails;
 
@@ -106,7 +106,6 @@ end;
 
 procedure TDbController.ConnectionError(Error: TXDataWebConnectionError);
 begin
-//  HideAll;
   if Assigned( FOnConnectionError ) then
   begin
     FOnConnectionError( Error );
@@ -133,7 +132,7 @@ begin
       TBclUtils.ISOToDateTime(
       JS.toString( LObj['EventEnd'] ) )
     );
-  FDetails.LogoDataUrl := 'image/jpeg;base64,' +
+  FDetails.LogoDataUrl := 'data:image/jpeg;base64,' +
     JS.toString( LObj['Logo'] );
 
   if Assigned( FOnUpdateYardSaleDetails ) then

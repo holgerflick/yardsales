@@ -20,8 +20,11 @@ type
     FCheckListBox: TBsWebCheckListBox;
     FSaleId: Integer;
 
+    FYardSale: TYardSaleDetails;
+
     procedure InitForm;
     procedure OnUpdateItemCategories(Sender: TObject);
+    procedure OnUpdateYardSaleDetails(Sender: TObject);
     procedure OnConnectionError(Sender: TObject);
   public
     { Public declarations }
@@ -33,7 +36,8 @@ var
 
 implementation
 uses
- WebLib.WebTools
+ WebLib.WebTools,
+ DateUtils
  ;
 
 
@@ -65,6 +69,8 @@ begin
 
   FController := TDbController.Create(self);
   FController.OnUpdateItemCategories := OnUpdateItemCategories;
+  FController.OnUpdateYardSaleDetails := OnUpdateYardSaleDetails;
+
   FController.OnConnectionError := OnConnectionError;
   FController.Connect;
 end;
@@ -81,6 +87,9 @@ var
   LDataset: TDataset;
   LItem: TBsWebCheckListBoxItem;
 begin
+  // request yard sale details
+  FController.RequestYardSaleDetails( FSaleId );
+
   FCheckListBox.Clear;
 
   LDataset := TDataSet( Sender );
@@ -97,6 +106,35 @@ begin
   FCheckListBox.Update;
 end;
 
+
+procedure TFrmAddParticipant.OnUpdateYardSaleDetails(Sender: TObject);
+var
+  LImage: TJSHTMLImageElement;
+  LRange,
+  LTitle: TJSHTMLElement;
+  LFormat: TFormatSettings;
+
+begin
+  FYardSale := TYardSaleDetails( Sender );
+
+  LImage := document.getHTMLElementById( 'YardSaleLogo' )
+    as TJSHTMLImageElement;
+  LImage.src := FYardSale.LogoDataUrl;
+
+  LTitle := document.getHTMLElementById( 'YardSaleTitle' );
+  LTitle.innerText := FYardSale.Title;
+
+  LRange := document.getHTMLElementById('YardSaleDates');
+
+  LFormat := TFormatSettings.Create;
+  LFormat.ShortDateFormat := 'dddd MMMM d';
+
+  LRange.innerHtml :=
+    DateToStr( FYardSale.EventStart, LFormat ) + '<br>Starts @ ' +
+    IntToStr( HourOf( FYardSale.EventStart ) ) +
+     '00 and ends @ ' + IntToStr( HourOf( FYardSale.EventEnd ) ) + '00';
+
+end;
 
 procedure TFrmAddParticipant.WebFormCreate(Sender: TObject);
 begin

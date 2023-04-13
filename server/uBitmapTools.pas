@@ -12,7 +12,7 @@ type
 
     class function Resize(
       AData: TBytes;
-      AFixedValue: Integer = 500;
+      AFixedValue: Integer = 900;
       AFixedDimension: TFixedDimension = fdWidth
       ): TBytes;
   end;
