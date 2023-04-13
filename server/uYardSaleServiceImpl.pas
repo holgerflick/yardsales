@@ -21,6 +21,8 @@ type
     function LoginAdmin( Login, Password: String ): TLoginResponse;
     function LoginParticipant( SaleId: Integer; Email, Name, Zip : String ): TLoginResponse;
 
+    function GetYardSale( SaleId: Integer ): TYardSale;
+
     // --- Participant
     procedure AddParticipant( NewParticipant: TNewParticipant );
     procedure UpdateParticipant( Participant: TUpdateParticipant );
@@ -103,6 +105,19 @@ begin
   LManager := TAdminManager.Create;
   try
     Result := LManager.GetParticipants(SaleId);
+  finally
+    LManager.Free;
+  end;
+end;
+
+function TYardSaleService.GetYardSale(SaleId: Integer): TYardSale;
+var
+  LManager: TParticipantManager;
+
+begin
+  LManager := TParticipantManager.Create;
+  try
+    Result := LManager.GetYardSale( SaleId );
   finally
     LManager.Free;
   end;

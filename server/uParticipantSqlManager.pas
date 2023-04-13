@@ -19,6 +19,9 @@ type
     class function LoginAdminQuery( AQuery: TFDQuery;
       ALogin, APassword: String ): Boolean;
 
+    class procedure YardSale( AQuery: TFDQuery;
+      ASaleId: Integer );
+
     class procedure AddParticipantQuery( AQuery: TFDQuery;
       ANewParticipant: TNewParticipant );
     class procedure UpdateParticipantQuery( AQuery: TFDQuery;
@@ -134,6 +137,13 @@ begin
 
   AQuery.ParamByName('email').AsString := TLoginManager.GetEmailFromToken;
   AQuery.ParamByName('salesid').AsInteger := TLoginManager.GetSaleIdFromToken;
+end;
+
+class procedure TParticipantSqlManager.YardSale(AQuery: TFDQuery;
+  ASaleId: Integer);
+begin
+  AQuery.SQL.Text := 'SELECT * FROM YardSales WHERE Id = :Id';
+  AQuery.ParamByName('Id').AsInteger := ASaleId;
 end;
 
 end.

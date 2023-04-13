@@ -21,6 +21,7 @@ type
     function LoginParticipant( SaleId: Integer; Email, Name, Zip : String ): TLoginResponse;
 
     procedure AddParticipant( NewParticipant: TNewParticipant );
+    function GetYardSale( SaleId: Integer ): TYardSale;
 
     // --- Participant operations
 

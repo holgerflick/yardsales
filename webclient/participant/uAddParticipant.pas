@@ -18,6 +18,7 @@ type
     { Private declarations }
     FController: TDbController;
     FCheckListBox: TBsWebCheckListBox;
+    FSaleId: Integer;
 
     procedure InitForm;
     procedure OnUpdateItemCategories(Sender: TObject);
@@ -31,6 +32,11 @@ var
   FrmAddParticipant: TFrmAddParticipant;
 
 implementation
+uses
+ WebLib.WebTools
+ ;
+
+
 
 {$R *.dfm}
 
@@ -40,9 +46,22 @@ begin
 end;
 
 procedure TFrmAddParticipant.InitForm;
+var
+  LSaleId: String;
+
 begin
   FCheckListBox := TBsWebCheckListBox.Create('ListItemCategories');
   FCheckListBox.Selection := Multiple;
+
+  // read SaleId from query string -- if it is not there, default to 0
+  if HasQueryParam('id', LSaleId ) then
+  begin
+    FSaleId := LSaleId.ToInteger;
+  end
+  else
+  begin
+    FSaleId := 0;
+  end;
 
   FController := TDbController.Create(self);
   FController.OnUpdateItemCategories := OnUpdateItemCategories;

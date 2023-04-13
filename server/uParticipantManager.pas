@@ -15,12 +15,16 @@ type
     procedure UpdateParticipant( AParticipant: TUpdateParticipant );
     procedure DeleteParticipant;
 
+    function GetYardSale( ASaleId: Integer ): TYardSale;
+
     function ItemCategories: TItemCategories;
 
   end;
 
 implementation
 uses
+  XData.Sys.Exceptions,
+
   System.SysUtils,
 
   FireDAC.Comp.Client,
@@ -55,6 +59,31 @@ begin
   LQuery := TDbController.Shared.GetQuery;
   try
     LQuery.ExecSQL;
+  finally
+    LQuery.ReturnToPool;
+  end;
+end;
+
+function TParticipantManager.GetYardSale(ASaleId: Integer): TYardSale;
+var
+  LQuery: TFDQuery;
+
+begin
+  Result := TYardSale.Create;
+  TXDataOperationContext.Current.Handler.ManagedObjects.Add(Result);
+
+  LQuery := TDbController.Shared.GetQuery;
+  try
+    TParticipantSqlManager.YardSale( LQuery, ASaleId );
+    LQuery.Open;
+
+    if LQuery.Eof then
+    begin
+      raise EXDataHttpException.Create(404, 'Yard Sale not found.');
+    end;
+
+    Result.Transfer( LQuery );
+
   finally
     LQuery.ReturnToPool;
   end;

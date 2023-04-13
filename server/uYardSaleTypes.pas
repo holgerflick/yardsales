@@ -8,7 +8,9 @@ uses
 
   System.Classes,
   System.DateUtils,
-  System.SysUtils
+  System.SysUtils,
+
+  FireDac.Comp.Client
   ;
 
 type
@@ -102,6 +104,8 @@ type
     function GetEventEndEpoch: Integer;
     function GetEventStartEpoch: Integer;
   public
+    procedure Transfer( AQuery: TFDQuery );
+
     property Id: Integer read FId write FId;
 
     property Title: String read FTitle write FTitle;
@@ -120,6 +124,10 @@ type
   TYardSales = TObjectList<TYardSale>;
 
 implementation
+
+uses
+  uBitmapTools
+  ;
 
 
 { TUpdateParticipant }
@@ -148,6 +156,42 @@ end;
 function TYardSale.GetEventStartEpoch: Integer;
 begin
   Result := EventStart.ToUnix;
+end;
+
+procedure TYardSale.Transfer(AQuery: TFDQuery);
+var
+  LThumb: TBytes;
+
+begin
+    self.Id := AQuery.FieldByName('Id').AsInteger;
+    self.EventStart := AQuery.FieldByName('EventStart').AsDateTime;
+    self.EventEnd := AQuery.FieldByName('EventEnd').AsDateTime;
+    self.Title := AQuery.FieldByName('title').AsString;
+
+    // do we have a logo?
+    if AQuery.FieldByName('logo').IsNull = False then
+    begin
+      // thumbnail available?
+      if AQuery.FieldByName('thumb').IsNull then
+      begin
+        // generate thumbnail
+        LThumb := TBitmapTools.Resize( AQuery.FieldByName('logo').AsBytes );
+
+        // update database
+        AQuery.Edit;
+        AQuery.FieldByName('thumb').AsBytes := LThumb;
+        AQuery.Post;
+      end
+      else
+      begin
+        // use thumbnail
+        LThumb := AQuery.FieldByName('thumb').AsBytes;
+      end;
+
+      // assign thumbnail
+      self.Logo := LThumb;
+    end;
+
 end;
 
 end.
