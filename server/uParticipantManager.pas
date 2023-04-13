@@ -17,7 +17,7 @@ type
 
     function GetYardSale( ASaleId: Integer ): TYardSale;
 
-    function ItemCategories: TItemCategories;
+    function ItemCategories( ASortOrder: TItemCategorySortOrder ): TItemCategories;
 
   end;
 
@@ -89,7 +89,8 @@ begin
   end;
 end;
 
-function TParticipantManager.ItemCategories: TItemCategories;
+function TParticipantManager.ItemCategories(
+  ASortOrder: TItemCategorySortOrder ): TItemCategories;
 var
   LQuery: TFDQuery;
 
@@ -99,7 +100,7 @@ begin
 
   LQuery := TDbController.Shared.GetQuery;
   try
-    TParticipantSqlManager.ItemCategories( LQuery );
+    TParticipantSqlManager.ItemCategories( LQuery, ASortOrder );
 
     LQuery.Open;
 

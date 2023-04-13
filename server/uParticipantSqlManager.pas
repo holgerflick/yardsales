@@ -28,7 +28,7 @@ type
       AParticipant: TUpdateParticipant );
     class procedure DeleteParticipantQuery( AQuery: TFDQuery );
 
-    class procedure ItemCategories( LQuery: TFDQuery );
+    class procedure ItemCategories( LQuery: TFDQuery; ASortOrder: TItemCategorySortOrder );
   end;
 
 implementation
@@ -96,9 +96,23 @@ begin
   AQuery.ParamByName('Email').AsString := TLoginManager.GetEmailFromToken;
 end;
 
-class procedure TParticipantSqlManager.ItemCategories(LQuery: TFDQuery);
+class procedure TParticipantSqlManager.ItemCategories(
+  LQuery: TFDQuery;
+  ASortOrder: TItemCategorySortOrder );
 begin
-  LQuery.SQL.Text := 'SELECT * FROM ItemCategories';
+  if ASortOrder = soName then
+  begin
+    LQuery.SQL.Text := 'SELECT Id, Name FROM ItemCategories ORDER BY Name';
+  end;
+
+  if ASortOrder = soUsage then
+  begin
+    LQuery.SQL.Text :=
+    'SELECT Id, NAME, COUNT(IdCategory) AS cnt FROM ItemCategories' +
+    '  LEFT JOIN ParticipantItemCategories ON Id = IdCategory' +
+    '  GROUP BY Id ' +
+    '  ORDER BY cnt DESC';
+  end;
 end;
 
 class function TParticipantSqlManager.LoginAdminQuery(AQuery: TFDQuery; ALogin,

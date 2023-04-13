@@ -21,6 +21,8 @@ type
     property Token: String read FToken write FToken;
   end;
 
+  TItemCategorySortOrder = (soName, soUsage);
+
   TItemCategory = class
   private
     FName: String;

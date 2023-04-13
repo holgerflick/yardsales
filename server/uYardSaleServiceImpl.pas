@@ -28,7 +28,7 @@ type
     procedure UpdateParticipant( Participant: TUpdateParticipant );
     procedure DeleteParticipant;
 
-    function ItemCategories: TItemCategories;
+    function ItemCategories( SortOrder: TItemCategorySortOrder ): TItemCategories;
 
     // --- Admin
     function GetYardSales: TYardSales;
@@ -157,14 +157,15 @@ begin
   end;
 end;
 
-function TYardSaleService.ItemCategories: TItemCategories;
+function TYardSaleService.ItemCategories(
+  SortOrder: TItemCategorySortOrder ): TItemCategories;
 var
   LManager: TParticipantManager;
 
 begin
   LManager := TParticipantManager.Create;
   try
-    Result := LManager.ItemCategories;
+    Result := LManager.ItemCategories(SortOrder);
   finally
     LManager.Free;
   end;

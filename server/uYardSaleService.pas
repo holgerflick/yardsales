@@ -31,7 +31,7 @@ type
     [Authorize]
     procedure DeleteParticipant;
 
-    function ItemCategories: TItemCategories;
+    function ItemCategories( SortOrder:TItemCategorySortOrder ) : TItemCategories;
 
     // --- Admin operations
 

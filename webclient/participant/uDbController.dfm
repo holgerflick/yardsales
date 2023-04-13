@@ -1,4 +1,5 @@
 object DbController: TDbController
+  OnCreate = WebDataModuleCreate
   Height = 311
   Width = 372
   object Client: TXDataWebClient
