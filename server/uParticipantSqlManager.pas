@@ -87,8 +87,6 @@ end;
 
 class procedure TParticipantSqlManager.DeleteParticipantQuery(AQuery: TFDQuery);
 begin
-
-
   AQuery.SQL.Text := 'DELETE FROM SalesParticipant WHERE ' +
     '( SalesId = :SalesId ) AND ( Email = :Email )';
 

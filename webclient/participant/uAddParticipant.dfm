@@ -1,7 +1,109 @@
 object FrmAddParticipant: TFrmAddParticipant
-  Width = 479
-  Height = 251
+  Width = 416
+  Height = 421
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
   OnCreate = WebFormCreate
+  object btnSend: TWebButton
+    Left = 48
+    Top = 80
+    Width = 161
+    Height = 41
+    ElementID = 'btnSend'
+    ElementFont = efCSS
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthPercent = 100.000000000000000000
+    OnClick = btnSendClick
+  end
+  object txtName: TWebEdit
+    Left = 48
+    Top = 144
+    Width = 96
+    Height = 25
+    ChildOrder = 1
+    ElementID = 'txtName'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtName'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object txtStreet: TWebEdit
+    Left = 48
+    Top = 206
+    Width = 96
+    Height = 25
+    ChildOrder = 5
+    ElementID = 'txtStreet'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtStreet'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object txtZip: TWebEdit
+    Left = 48
+    Top = 237
+    Width = 96
+    Height = 25
+    ChildOrder = 6
+    ElementID = 'txtZip'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtZip'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object txtEmail: TWebEdit
+    Left = 48
+    Top = 299
+    Width = 96
+    Height = 25
+    ChildOrder = 8
+    ElementID = 'txtEmail'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtEmail'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object txtCity: TWebEdit
+    Left = 48
+    Top = 268
+    Width = 96
+    Height = 25
+    ChildOrder = 9
+    ElementID = 'txtCity'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtCity'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object txtState: TWebEdit
+    Left = 48
+    Top = 175
+    Width = 96
+    Height = 25
+    ChildOrder = 11
+    ElementID = 'txtState'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtState'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
 end

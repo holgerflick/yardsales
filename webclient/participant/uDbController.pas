@@ -3,22 +3,22 @@
 interface
 
 uses
-  System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, Data.DB, WEBLib.CDS,
-  XData.Web.Connection, XData.Web.Client;
+  System.SysUtils,
+  System.Classes,
 
-type
-  TYardSaleDetails = class
-  private
-    FEventStart: TDateTime;
-    FEventEnd: TDateTime;
-    FTitle: String;
-    FLogoDataUrl: String;
-  public
-    property Title: String read FTitle write FTitle;
-    property EventStart: TDateTime read FEventStart write FEventStart;
-    property EventEnd: TDateTime read FEventEnd write FEventEnd;
-    property LogoDataUrl: String read FLogoDataUrl write FLogoDataUrl;
-  end;
+  JS,
+  Web,
+
+  Data.DB,
+
+  WEBLib.Modules,
+  WEBLib.CDS,
+
+  XData.Web.Connection,
+  XData.Web.Client,
+
+  uYardSaleClientTypes
+  ;
 
 type
   TDbController = class(TWebDataModule)
@@ -35,10 +35,13 @@ type
     FOnConnectionError: TNotifyEvent;
     FOnUpdateItemCategories: TNotifyEvent;
     FOnUpdateYardSaleDetails: TNotifyEvent;
+    FOnSendNewParticipantFail: TNotifyEvent;
+    FOnSendNewParticipantSuccess: TNotifyEvent;
 
     FDetails: TYardSaleDetails;
 
   private
+
     { Private declarations }
 
     [async]
@@ -49,6 +52,10 @@ type
   public
     { Public declarations }
     procedure Connect;
+
+    [async]
+    procedure SendNewParticipant( ANewParticipant: TNewParticipant );
+
 
     [async]
     procedure RequestYardSaleDetails( ASaleId: Integer );
@@ -63,8 +70,13 @@ type
 
     property OnConnectionError: TNotifyEvent
       read FOnConnectionError write FOnConnectionError;
-  end;
 
+    property OnSendNewParticipantSuccess: TNotifyEvent
+      read FOnSendNewParticipantSuccess write FOnSendNewParticipantSuccess;
+
+    property OnSendNewParticipantFail: TNotifyEvent
+      read FOnSendNewParticipantFail write FOnSendNewParticipantFail;
+  end;
 
 implementation
 
@@ -80,6 +92,11 @@ uses
 procedure TDbController.WebDataModuleCreate(Sender: TObject);
 begin
   FDetails := nil;
+  FOnUpdateItemCategories := nil;
+  FOnUpdateYardSaleDetails := nil;
+  FOnConnectionError := nil;
+  FOnSendNewParticipantSuccess := nil;
+  FOnSendNewParticipantFail := nil;
 end;
 
 procedure TDbController.AssignItemCategories(AResponse: TXDataClientResponse);
@@ -116,7 +133,6 @@ procedure TDbController.ProcessYardSaleDetails(AResponse: TXDataClientResponse);
 var
   LObj: TJSObject;
 
-
 begin
   LObj := AResponse.ResultAsObject;
   FDetails.Free;
@@ -139,8 +155,6 @@ begin
   begin
     FOnUpdateYardSaleDetails( FDetails );
   end;
-
-  //
 end;
 
 procedure TDbController.RequestItemCategories;
@@ -186,6 +200,35 @@ begin
       // handle error
       console.log( E.Message );
     end;
+  end;
+end;
+
+procedure TDbController.SendNewParticipant(ANewParticipant: TNewParticipant);
+var
+  LResp: TXDataClientResponse;
+  LObj: TJsObject;
+
+begin
+  LObj := ANewParticipant.AsJsObject;
+  try
+    LResp := await( Client.RawInvokeAsync( 'IYardSaleService.AddParticipant', [LObj] ) );
+
+    if LResp.StatusCode = 204 then
+    begin
+      if Assigned( FOnSendNewParticipantSuccess ) then
+      begin
+        FOnSendNewParticipantSuccess( LResp );
+      end;
+    end;
+  except
+    on E: EXDataClientException do
+    begin
+      if Assigned( FOnSendNewParticipantFail ) then
+      begin
+        FOnSendNewParticipantFail( LResp );
+      end;
+    end;
+
   end;
 end;
 

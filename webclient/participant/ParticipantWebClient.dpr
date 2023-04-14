@@ -5,7 +5,8 @@ uses
   WEBLib.Forms,
   uAddParticipant in 'uAddParticipant.pas' {FrmAddParticipant: TWebForm} {*.html},
   uDbController in 'uDbController.pas' {DbController: TWebDataModule},
-  uBsWebCheckListBox in 'uBsWebCheckListBox.pas';
+  uBsWebCheckListBox in 'uBsWebCheckListBox.pas',
+  uYardSaleClientTypes in 'uYardSaleClientTypes.pas';
 
 {$R *.res}
 

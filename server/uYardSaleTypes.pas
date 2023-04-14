@@ -95,7 +95,6 @@ type
 
   TDetailedParticipants = TObjectList<TDetailedParticipant>;
 
-
   TYardSale = class
   private
     FId: Integer;

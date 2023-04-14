@@ -47,7 +47,7 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
-        <TMSVersion>1.0.92</TMSVersion>
+        <TMSVersion>1.0.97</TMSVersion>
         <TMSWebHTMLFile>index.html</TMSWebHTMLFile>
         <TMSWebProject>2</TMSWebProject>
     </PropertyGroup>
@@ -108,6 +108,7 @@
             <DesignClass>TWebDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="uBsWebCheckListBox.pas"/>
+        <DCCReference Include="uYardSaleClientTypes.pas"/>
         <None Include="index.html"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
