@@ -9,6 +9,9 @@
         <Projects Include="webclient\participant\ParticipantWebClient.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="mapping\OptimalRoute.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="ParticipantWebClient:Make">
         <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj" Targets="Make"/>
     </Target>
+    <Target Name="OptimalRoute">
+        <MSBuild Projects="mapping\OptimalRoute.dproj"/>
+    </Target>
+    <Target Name="OptimalRoute:Clean">
+        <MSBuild Projects="mapping\OptimalRoute.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="OptimalRoute:Make">
+        <MSBuild Projects="mapping\OptimalRoute.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="YardSaleServer;ParticipantWebClient"/>
+        <CallTarget Targets="YardSaleServer;ParticipantWebClient;OptimalRoute"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="YardSaleServer:Clean;ParticipantWebClient:Clean"/>
+        <CallTarget Targets="YardSaleServer:Clean;ParticipantWebClient:Clean;OptimalRoute:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="YardSaleServer:Make;ParticipantWebClient:Make"/>
+        <CallTarget Targets="YardSaleServer:Make;ParticipantWebClient:Make;OptimalRoute:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
