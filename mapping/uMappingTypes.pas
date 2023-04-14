@@ -62,6 +62,24 @@ type
 
   TParticipants = TObjectList<TParticipant>;
 
+  TNeedLocation = class
+  private
+    FId: Integer;
+    FAddress: String;
+    FLocation: TLocation;
+  public
+    constructor Create( ADataset: TDataset );
+    destructor Destroy; override;
+
+    procedure TransferFrom( ADataset: TDataset );
+
+    property Id: Integer read FId write FId;
+    property Address: String read FAddress write FAddress;
+    property Location: TLocation read FLocation write FLocation;
+  end;
+
+  TNeedLocations = TObjectList<TNeedLocation>;
+
 implementation
 
 uses
@@ -151,6 +169,31 @@ begin
   end;
 
   self.Categories := GetCategories( ACategories );
+end;
+
+{ TNeedLocation }
+
+constructor TNeedLocation.Create( ADataset: TDataset );
+begin
+  FLocation := TLocation.Create;
+
+  if Assigned( ADataset ) then
+  begin
+    TransferFrom(ADataset)
+  end;
+end;
+
+destructor TNeedLocation.Destroy;
+begin
+  FLocation.Free;
+
+  inherited;
+end;
+
+procedure TNeedLocation.TransferFrom(ADataset: TDataset);
+begin
+  self.Id := ADataset.FieldByName('Id').AsInteger;
+  self.Address := ADataset.FieldByName('Address').AsString;
 end;
 
 end.

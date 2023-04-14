@@ -21,6 +21,7 @@ type
     ParticipantCategories: TFDQuery;
     sourceParticipants: TDataSource;
     ParticipantLocations: TFDQuery;
+    NeedLocation: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
@@ -30,6 +31,7 @@ type
 
     function GetSales: TSales;
     function GetParticipants( ASalesId: Integer ): TParticipants;
+    function GetNeedLocations( ASalesId: Integer ): TNeedLocations;
 
   end;
 
@@ -47,6 +49,22 @@ uses
 procedure TDbController.DataModuleCreate(Sender: TObject);
 begin
   SetupConnection;
+end;
+
+function TDbController.GetNeedLocations(ASalesId: Integer): TNeedLocations;
+begin
+  NeedLocation.Close;
+  NeedLocation.ParamByName('SalesId').AsInteger := ASalesId;
+  NeedLocation.Open;
+
+  Result := TNeedLocations.Create;
+
+  while not NeedLocation.Eof do
+  begin
+    Result.Add( TNeedLocation.Create( NeedLocation ) );
+
+    NeedLocation.Next;
+  end;
 end;
 
 function TDbController.GetParticipants(ASalesId: Integer): TParticipants;

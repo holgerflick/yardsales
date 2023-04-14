@@ -82,4 +82,23 @@ object DbController: TDbController
         Value = 11
       end>
   end
+  object NeedLocation: TFDQuery
+    ActiveStoredUsage = []
+    Connection = Connection
+    SQL.Strings = (
+      
+        'SELECT P.Id, CONCAT( Street, ",", City, ",", State, " ", Zip ) A' +
+        'S Address, Latitude, Longitude FROM SalesParticipant P  '
+      '  LEFT JOIN Locations L ON L.Id = P.Id'
+      '  WHERE (SalesId = :SalesId) AND (Latitude IS NULL)')
+    Left = 352
+    Top = 264
+    ParamData = <
+      item
+        Name = 'SALESID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 2
+      end>
+  end
 end
