@@ -13,8 +13,12 @@ uses
   VCL.TMSFNCGeocoding,
   VCL.TMSFNCCloudBase,
   VCL.TMSFNCGoogleMaps,
-  Threading,
-  Graphics
+
+  Vcl.Graphics,
+  Vcl.ComCtrls,
+
+  System.Threading,
+  System.RegularExpressions
   ;
 
 type
@@ -26,6 +30,7 @@ type
     FGeocoder: TTMSFNCGeocoding;
 
     function GetDataUrlForSaleIcon: String;
+    function StripHtml( AText: String ): String;
 
   public
     constructor Create;
@@ -46,6 +51,8 @@ type
     procedure OptimizeRoute(ASalesId: Integer; AHome: String;
         AMap: TTMSFNCGoogleMaps; AModel: TDbModel);
 
+    procedure DisplayRoutes(ARoutes: TListView; ADirectionsData:
+        TTMSFNCGoogleMapsDirectionsData);
 
     property Geocoder: TTMSFNCGeocoding read FGeocoder;
 
@@ -54,9 +61,11 @@ type
 implementation
 
 uses
+  System.SysUtils,
   System.NetEncoding,
-  TMSFNCUtils,
-  Classes;
+  System.Classes,
+  WinApi.Windows
+  ;
 
 { TMainViewController }
 
@@ -114,6 +123,70 @@ begin
   inherited;
 end;
 
+procedure TMainViewController.DisplayRoutes(ARoutes: TListView;
+    ADirectionsData: TTMSFNCGoogleMapsDirectionsData);
+var
+  LColIdx,
+  LColDistance,
+  LColDuration,
+  LColInstructions : TListColumn;
+
+  LSteps: Integer;
+begin
+  // init tree
+  ARoutes.Clear;
+  ARoutes.ViewStyle := vsReport;
+
+  LColIdx := ARoutes.Columns.Add;
+  LColIdx.Caption := 'Step';
+  LColIdx.Width := -2;
+  LColIdx.Alignment := taRightJustify;
+
+  LColDistance :=  ARoutes.Columns.Add;
+  LColDistance.Caption := 'Distance';
+  LColDistance.Width := -2;
+  LColDistance.Alignment := taRightJustify;
+
+  LColDuration := ARoutes.Columns.Add;
+  LColDuration.Caption := 'Duration';
+  LColDuration.Width := -2;
+  LColDuration.Alignment := taRightJustify;
+
+  LColInstructions := ARoutes.Columns.Add;
+  LColInstructions.Caption := 'Instructions';
+  LColInstructions.Width := -1;
+
+  // we only show the first route
+  // add more UI for selection options
+
+  if Length(ADirectionsData.Routes) = 0 then
+  begin
+    exit;
+  end;
+
+  var LRoute := ADirectionsData.Routes[0];
+
+  if Length( LRoute.Legs ) = 0 then
+  begin
+    exit;
+  end;
+
+  LSteps := 0;
+
+  for var LLeg in LRoute.Legs do
+  begin
+    for var LStep in LLeg.Steps do
+    begin
+      Inc(LSteps);
+      var LItem := ARoutes.Items.Add;
+      LItem.Caption := LSteps.ToString;
+      LItem.SubItems.Add( LStep.Distance.ToString + ' m' );
+      LItem.SubItems.Add( LStep.Duration.ToString + ' min' );
+      LItem.SubItems.Add( StripHTML( LStep.Instructions ) );
+    end;
+  end;
+end;
+
 procedure TMainViewController.GeocodeParticipants(ASalesId: Integer; AGeocoder:
     TTMSFNCGeocoding; AModel: TDbModel);
 begin
@@ -167,7 +240,7 @@ var
   LOutput: TStringStream;
 
 begin
-  LResource := TTMSFNCUtils.GetResourceStream('SALEPNG');
+  LResource := TResourceStream.Create( hInstance, 'SALEPNG', RT_RCDATA);
   LOutput := nil;
   try
     LOutput := TStringStream.Create;
@@ -199,9 +272,20 @@ begin
 
     AMap.AddDirections( AHome, AHome, False, True, clRed, 2, 0.5, dtmDriving,
        True, LWaypoints, True );
+
   finally
     LWaypoints.Free;
   end;
+end;
+
+function TMainViewController.StripHtml(AText: String): String;
+var
+  R: TRegEx;
+begin
+  R := TRegEx.Create( '<([^>]+)>', [roIgnoreCase, roMultiLine] );
+  Result := R.Replace( AText, ' ' );
+  // replace duplicate spaces with one
+  Result := Result.Replace('  ', ' ', [rfReplaceAll]);
 end;
 
 end.

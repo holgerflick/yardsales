@@ -100,6 +100,22 @@ type
 
   TNeedLocations = TObjectList<TNeedLocation>;
 
+
+  TTurnByTurnInstruction = class
+  private
+    FDistance: Integer;
+    FDuration: Integer;
+    FInstructions: string;
+  public
+    constructor Create( AInstructions: String; ADistance, ADuration: Integer );
+
+    property Instructions: string read FInstructions;
+    property Distance: Integer read FDistance;
+    property Duration: Integer read FDuration;
+  end;
+
+  TTurnByTurnInstructions = TObjectList<TTurnByTurnInstruction>;
+
 implementation
 
 uses
@@ -236,6 +252,16 @@ begin
   begin
     FOnUpdateLocation( self.Owner );
   end;
+end;
+
+{ TTurnByTurnInstruction }
+
+constructor TTurnByTurnInstruction.Create(AInstructions: String; ADistance,
+  ADuration: Integer);
+begin
+  FInstructions := AInstructions;
+  FDistance := ADistance;
+  FDuration := ADuration;
 end;
 
 end.

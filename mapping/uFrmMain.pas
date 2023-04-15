@@ -12,18 +12,23 @@ uses
 
   uMappingTypes,
   uDbController,
-  uMainViewController
+  uMainViewController, Vcl.ExtCtrls, AdvSplitter, AdvCustomControl,
+  AdvTreeViewBase, AdvTreeViewData, AdvCustomTreeView, AdvTreeView, Vcl.ComCtrls
   ;
 
 type
   TFrmMain = class(TForm)
-    cbSales: TComboBox;
-    btnRoute: TButton;
-    btnMarker: TButton;
     Geocoding: TTMSFNCGeocoding;
-    btnGeocode: TButton;
-    txtHome: TEdit;
     Map: TTMSFNCGoogleMaps;
+    AdvSplitter1: TAdvSplitter;
+    Panel1: TPanel;
+    cbSales: TComboBox;
+    btnGeocode: TButton;
+    btnMarker: TButton;
+    btnRoute: TButton;
+    txtHome: TEdit;
+    ListView1: TListView;
+    Routes: TListView;
     procedure btnGeocodeClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnMarkerClick(Sender: TObject);
@@ -31,10 +36,13 @@ type
     procedure cbSalesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MapMapDblClick(Sender: TObject; AEventData: TTMSFNCMapsEventData);
+    procedure MapRetrievedDirectionsData(Sender: TObject; AEventData:
+        TTMSFNCMapsEventData; ADirectionsData: TTMSFNCGoogleMapsDirectionsData);
   private
     { Private declarations }
     FSales: TSales;
 
+    FLastDirections: TTMSFNCGoogleMapsDirectionsData;
     FHome: TTMSFNCMapsCoordinateRec;
     FModel: TDbModel;
     FViewController: TMainViewController;
@@ -124,6 +132,8 @@ begin
   btnRoute.Enabled := False;
   btnMarker.Enabled := False;
 
+  Routes.Clear;
+
   LoadSales;
 end;
 
@@ -161,6 +171,14 @@ begin
 
   txtHome.Text := Format( 'Home set to lat: %.3f lon: %.3f',
     [FHome.Latitude, FHome.Longitude] );
+end;
+
+procedure TFrmMain.MapRetrievedDirectionsData(Sender: TObject; AEventData:
+    TTMSFNCMapsEventData; ADirectionsData: TTMSFNCGoogleMapsDirectionsData);
+begin
+  FLastDirections := ADirectionsData;
+
+  FViewController.DisplayRoutes( Routes, ADirectionsData );
 end;
 
 procedure TFrmMain.OptimizeRoute;
