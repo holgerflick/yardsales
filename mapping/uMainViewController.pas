@@ -12,7 +12,9 @@ uses
   VCL.TMSFNCMaps,
   VCL.TMSFNCGeocoding,
   VCL.TMSFNCCloudBase,
-  Threading
+  VCL.TMSFNCGoogleMaps,
+  Threading,
+  Graphics
   ;
 
 type
@@ -31,7 +33,7 @@ type
 
     procedure AddParticipants(
       ASalesId: Integer;
-      AMap: TTMSFNCMaps;
+      AMap: TTMSFNCGoogleMaps;
       AModel: TDbModel
       );
 
@@ -40,6 +42,10 @@ type
       AGeocoder: TTMSFNCGeocoding;
       AModel: TDbModel
     );
+
+    procedure OptimizeRoute(ASalesId: Integer; AHome: String;
+        AMap: TTMSFNCGoogleMaps; AModel: TDbModel);
+
 
     property Geocoder: TTMSFNCGeocoding read FGeocoder;
 
@@ -55,7 +61,7 @@ uses
 { TMainViewController }
 
 procedure TMainViewController.AddParticipants(ASalesId: Integer; AMap:
-    TTMSFNCMaps; AModel: TDbModel);
+    TTMSFNCGoogleMaps; AModel: TDbModel);
 var
   LIconDataUrl: String;
 
@@ -171,6 +177,30 @@ begin
   finally
     LOutput.Free;
     LResource.Free;
+  end;
+end;
+
+procedure TMainViewController.OptimizeRoute(ASalesId: Integer; AHome: String;
+    AMap: TTMSFNCGoogleMaps; AModel: TDbModel);
+var
+  LWaypoints: TStringlist;
+begin
+  FParticipants.Free;
+  FParticipants := AModel.GetParticipants(ASalesId);
+
+  LWayPoints := TStringlist.Create;
+  try
+    // add all participants as waypoints
+    for var LParticipant in FParticipants do
+    begin
+      LWaypoints.Add( LParticipant.Street + ',' + LParticipant.City + ',' +
+        LParticipant.State + ' ' + LParticipant.Zip + ', USA' );
+    end;
+
+    AMap.AddDirections( AHome, AHome, False, True, clRed, 2, 0.5, dtmDriving,
+       True, LWaypoints, True );
+  finally
+    LWaypoints.Free;
   end;
 end;
 

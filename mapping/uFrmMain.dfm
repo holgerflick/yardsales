@@ -38,27 +38,6 @@ object FrmMain: TFrmMain
     TabOrder = 1
     OnClick = btnRouteClick
   end
-  object Map: TTMSFNCMaps
-    Left = 8
-    Top = 98
-    Width = 896
-    Height = 568
-    ParentDoubleBuffered = False
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    DoubleBuffered = True
-    TabOrder = 2
-    APIKey = '***REMOVED***'
-    Polylines = <>
-    Polygons = <>
-    Circles = <>
-    Rectangles = <>
-    Markers = <>
-    ElementContainers = <>
-    Labels = <>
-    HeadLinks = <>
-    Options.DefaultZoomLevel = 12.000000000000000000
-    DesigntimeEnabled = False
-  end
   object btnMarker: TButton
     Left = 196
     Top = 51
@@ -66,7 +45,7 @@ object FrmMain: TFrmMain
     Height = 41
     Caption = 'Locate participants'
     Enabled = False
-    TabOrder = 3
+    TabOrder = 2
     OnClick = btnMarkerClick
   end
   object Geocoding: TTMSFNCGeocoding
@@ -85,16 +64,44 @@ object FrmMain: TFrmMain
     Height = 41
     Caption = 'Geocode participants'
     Enabled = False
-    TabOrder = 5
+    TabOrder = 4
     OnClick = btnGeocodeClick
   end
-  object Routing: TTMSFNCRouteCalculator
-    Left = 664
-    Top = 64
-    Width = 26
-    Height = 26
-    Visible = True
+  object txtHome: TEdit
+    Left = 8
+    Top = 98
+    Width = 896
+    Height = 29
+    ReadOnly = True
+    TabOrder = 5
+    Text = '10611 Chevrolet Way, Estero, FL 33928, USA'
+  end
+  object Map: TTMSFNCGoogleMaps
+    Left = 8
+    Top = 133
+    Width = 896
+    Height = 533
+    ParentDoubleBuffered = False
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    DoubleBuffered = True
+    TabOrder = 6
+    OnMapDblClick = MapMapDblClick
     APIKey = '***REMOVED***'
-    Routes = <>
+    Polylines = <>
+    Polygons = <>
+    Circles = <>
+    Rectangles = <>
+    Markers = <>
+    Options.DefaultZoomLevel = 12.000000000000000000
+    Options.BackgroundColor = clBlack
+    Options.DisablePOI = False
+    Options.Version = 'weekly'
+    ElementContainers = <>
+    HeadLinks = <>
+    KMLLayers = <>
+    Directions = <>
+    Clusters = <>
+    OverlayViews = <>
+    DesigntimeEnabled = False
   end
 end

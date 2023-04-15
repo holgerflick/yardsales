@@ -7,33 +7,35 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VCL.TMSFNCTypes,
   VCL.TMSFNCUtils, VCL.TMSFNCGraphics, VCL.TMSFNCGraphicsTypes,
   VCL.TMSFNCMapsCommonTypes, VCL.TMSFNCCustomControl, VCL.TMSFNCWebBrowser,
-  VCL.TMSFNCMaps,
+  VCL.TMSFNCMaps,  VCL.TMSFNCCustomComponent, VCL.TMSFNCCloudBase,
+  VCL.TMSFNCGeocoding, VCL.TMSFNCGoogleMaps,
 
   uMappingTypes,
   uDbController,
-  uMainViewController, VCL.TMSFNCCustomComponent, VCL.TMSFNCCloudBase,
-  VCL.TMSFNCGeocoding, VCL.TMSFNCRouteCalculator
+  uMainViewController
   ;
 
 type
   TFrmMain = class(TForm)
     cbSales: TComboBox;
     btnRoute: TButton;
-    Map: TTMSFNCMaps;
     btnMarker: TButton;
     Geocoding: TTMSFNCGeocoding;
     btnGeocode: TButton;
-    Routing: TTMSFNCRouteCalculator;
+    txtHome: TEdit;
+    Map: TTMSFNCGoogleMaps;
     procedure btnGeocodeClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnMarkerClick(Sender: TObject);
     procedure btnRouteClick(Sender: TObject);
     procedure cbSalesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure MapMapDblClick(Sender: TObject; AEventData: TTMSFNCMapsEventData);
   private
     { Private declarations }
     FSales: TSales;
 
+    FHome: TTMSFNCMapsCoordinateRec;
     FModel: TDbModel;
     FViewController: TMainViewController;
 
@@ -45,6 +47,7 @@ type
 
     procedure LocateParticipants;
     procedure GeocodeParticipants;
+    procedure OptimizeRoute;
 
   public
     { Public declarations }
@@ -79,7 +82,7 @@ end;
 
 procedure TFrmMain.btnRouteClick(Sender: TObject);
 begin
-  //OptimizeRoute;
+  OptimizeRoute;
 end;
 
 procedure TFrmMain.cbSalesChange(Sender: TObject);
@@ -146,6 +149,25 @@ procedure TFrmMain.LocateParticipants;
 begin
   FViewController.AddParticipants(
     SelectedSale.Id,
+    Map,
+    FModel );
+end;
+
+procedure TFrmMain.MapMapDblClick(Sender: TObject; AEventData:
+    TTMSFNCMapsEventData);
+begin
+  FHome.Longitude := AEventData.Coordinate.Longitude;
+  FHome.Latitude := AEventData.Coordinate.Latitude;
+
+  txtHome.Text := Format( 'Home set to lat: %.3f lon: %.3f',
+    [FHome.Latitude, FHome.Longitude] );
+end;
+
+procedure TFrmMain.OptimizeRoute;
+begin
+  FViewController.OptimizeRoute(
+    SelectedSale.Id,
+    txtHome.Text,
     Map,
     FModel );
 end;
