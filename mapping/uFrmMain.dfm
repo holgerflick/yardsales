@@ -86,7 +86,7 @@ object FrmMain: TFrmMain
     Caption = 'Geocode participants'
     Enabled = False
     TabOrder = 5
-    OnClick = btnMarkerClick
+    OnClick = btnGeocodeClick
   end
   object Routing: TTMSFNCRouteCalculator
     Left = 664

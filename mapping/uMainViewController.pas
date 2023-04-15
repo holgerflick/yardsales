@@ -23,6 +23,8 @@ type
     FProgress:  TFrmProgress;
     FGeocoder: TTMSFNCGeocoding;
 
+    function GetDataUrlForSaleIcon: String;
+
   public
     constructor Create;
     destructor Destroy; override;
@@ -30,13 +32,13 @@ type
     procedure AddParticipants(
       ASalesId: Integer;
       AMap: TTMSFNCMaps;
-      AModel: TDbController
+      AModel: TDbModel
       );
 
     procedure GeocodeParticipants(
       ASalesId: Integer;
       AGeocoder: TTMSFNCGeocoding;
-      AModel: TDbController
+      AModel: TDbModel
     );
 
     property Geocoder: TTMSFNCGeocoding read FGeocoder;
@@ -46,15 +48,21 @@ type
 implementation
 
 uses
+  System.NetEncoding,
+  TMSFNCUtils,
   Classes;
 
 { TMainViewController }
 
-procedure TMainViewController.AddParticipants(ASalesId: Integer; AMap: TTMSFNCMaps;
-  AModel: TDbController);
-
+procedure TMainViewController.AddParticipants(ASalesId: Integer; AMap:
+    TTMSFNCMaps; AModel: TDbModel);
+var
+  LIconDataUrl: String;
 
 begin
+  LIconDataUrl := GetDataUrlForSaleIcon;
+
+  FParticipants.Free;
   FParticipants := AModel.GetParticipants(ASalesId);
   AMap.BeginUpdate;
   try
@@ -71,11 +79,14 @@ begin
           );
 
         LMarker.DataObject := LParticipant;
+        LMarker.IconURL := LIconDataUrl;
       end;
     end;
 
-    AMap.ZoomToBounds( AMap.Markers.ToCoordinateArray );
-
+    if AMap.Markers.Count > 0 then
+    begin
+      AMap.ZoomToBounds( AMap.Markers.ToCoordinateArray );
+    end;
   finally
     AMap.EndUpdate;
   end;
@@ -97,8 +108,8 @@ begin
   inherited;
 end;
 
-procedure TMainViewController.GeocodeParticipants(ASalesId: Integer;
-  AGeocoder: TTMSFNCGeocoding; AModel: TDbController);
+procedure TMainViewController.GeocodeParticipants(ASalesId: Integer; AGeocoder:
+    TTMSFNCGeocoding; AModel: TDbModel);
 begin
   if not Assigned( FGeocoder ) then
   begin
@@ -124,8 +135,10 @@ begin
             LItem := TNeedLocation( ARequest.DataPointer );
             if ARequest.Items.Count > 0 then
             begin
-              LItem.Location.Latitude := ARequest.Items[0].Coordinate.Latitude;
-              LItem.Location.Longitude := ARequest.Items[0].Coordinate.Longitude;
+              LItem.Location.UpdateLocation(
+                ARequest.Items[0].Coordinate.Latitude,
+                ARequest.Items[0].Coordinate.Longitude
+              );
             end;
           end;
 
@@ -134,17 +147,30 @@ begin
             procedure
             begin
               FProgress.Increase;
-
-              if FGeocoder.RunningRequests.Count = 0 then
-              begin
-                FProgress.Close;
-                FGeocoder := nil;
-              end;
             end
           );
         end, '', LNeedLocation
       );
     end;
+  end;
+end;
+
+function TMainViewController.GetDataUrlForSaleIcon: String;
+var
+  LResource: TResourceStream;
+  LOutput: TStringStream;
+
+begin
+  LResource := TTMSFNCUtils.GetResourceStream('SALEPNG');
+  LOutput := nil;
+  try
+    LOutput := TStringStream.Create;
+    TBase64Encoding.Base64.Encode( LResource, LOutput );
+
+    Result := 'data:image/png;base64,' + LOutput.DataString;
+  finally
+    LOutput.Free;
+    LResource.Free;
   end;
 end;
 

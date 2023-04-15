@@ -85,17 +85,24 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <RcCompile Include="Icons.rc">
+            <Form>Icons.res</Form>
+        </RcCompile>
         <DCCReference Include="uFrmMain.pas">
             <Form>FrmMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="uDbController.pas">
-            <Form>DbController</Form>
+            <Form>DbModel</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="uMappingTypes.pas"/>
         <DCCReference Include="uMainViewController.pas"/>
+        <DCCReference Include="uFrmProgress.pas">
+            <Form>FrmProgress</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

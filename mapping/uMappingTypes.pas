@@ -2,8 +2,11 @@
 
 interface
 uses
+  System.Classes,
   System.Generics.Collections,
+
   DB
+
   ;
 type
   TSale = class
@@ -26,9 +29,25 @@ type
   TSales = TObjectList<TSale>;
 
   TLocation = class
+  private
+    FLatitude,
+    FLongitude: Double;
+    FOnUpdateLocation: TNotifyEvent;
+
+    FOwner: TObject;
   public
-    Latitude,
-    Longitude: Double;
+    constructor Create( AOwner: TObject );
+
+
+    procedure UpdateLocation( ALatitude, ALongitude: Double );
+
+    property Owner: TObject read FOwner;
+    property Latitude: Double read FLatitude;
+    property Longitude: Double read FLongitude;
+
+    property OnUpdateLocation: TNotifyEvent
+      read FOnUpdateLocation write FOnUpdateLocation;
+
   end;
 
   TParticipant = class
@@ -67,6 +86,7 @@ type
     FId: Integer;
     FAddress: String;
     FLocation: TLocation;
+
   public
     constructor Create( ADataset: TDataset );
     destructor Destroy; override;
@@ -75,7 +95,7 @@ type
 
     property Id: Integer read FId write FId;
     property Address: String read FAddress write FAddress;
-    property Location: TLocation read FLocation write FLocation;
+    property Location: TLocation read FLocation;
   end;
 
   TNeedLocations = TObjectList<TNeedLocation>;
@@ -163,9 +183,12 @@ begin
 
   if not AParticipants.FieldByName('Latitude').IsNull then
   begin
-    self.Location := TLocation.Create;
-    self.Location.Latitude := AParticipants.FieldByName('Latitude').AsFloat;
-    self.Location.Longitude := AParticipants.FieldByName('Longitude').AsFloat;
+    Location := TLocation.Create(self);
+
+    Location.UpdateLocation(
+      AParticipants.FieldByName('Latitude').AsFloat,
+      AParticipants.FieldByName('Longitude').AsFloat
+    );
   end;
 
   self.Categories := GetCategories( ACategories );
@@ -175,7 +198,7 @@ end;
 
 constructor TNeedLocation.Create( ADataset: TDataset );
 begin
-  FLocation := TLocation.Create;
+  FLocation := TLocation.Create(self);
 
   if Assigned( ADataset ) then
   begin
@@ -194,6 +217,25 @@ procedure TNeedLocation.TransferFrom(ADataset: TDataset);
 begin
   self.Id := ADataset.FieldByName('Id').AsInteger;
   self.Address := ADataset.FieldByName('Address').AsString;
+end;
+
+{ TLocation }
+
+constructor TLocation.Create(AOwner: TObject);
+begin
+  FOnUpdateLocation := nil;
+  FOwner := AOwner;
+end;
+
+procedure TLocation.UpdateLocation(ALatitude, ALongitude: Double);
+begin
+  FLatitude := ALatitude;
+  FLongitude := ALongitude;
+
+  if Assigned( FOnUpdateLocation ) then
+  begin
+    FOnUpdateLocation( self.Owner );
+  end;
 end;
 
 end.

@@ -1,4 +1,4 @@
-object DbController: TDbController
+object DbModel: TDbModel
   OnCreate = DataModuleCreate
   Height = 339
   Width = 495
@@ -91,7 +91,7 @@ object DbController: TDbController
         'S Address, Latitude, Longitude FROM SalesParticipant P  '
       '  LEFT JOIN Locations L ON L.Id = P.Id'
       '  WHERE (SalesId = :SalesId) AND (Latitude IS NULL)')
-    Left = 352
+    Left = 128
     Top = 264
     ParamData = <
       item
@@ -99,6 +99,30 @@ object DbController: TDbController
         DataType = ftInteger
         ParamType = ptInput
         Value = 2
+      end>
+  end
+  object UpdateLocation: TFDQuery
+    ActiveStoredUsage = []
+    Connection = Connection
+    SQL.Strings = (
+      'REPLACE INTO Locations'
+      '  (Id, Latitude, Longitude, Created ) VALUES'
+      '  (:Id, :Latitude, :Longitude, UTC_TIMESTAMP() )'
+      '')
+    Left = 248
+    Top = 264
+    ParamData = <
+      item
+        Name = 'ID'
+        ParamType = ptInput
+      end
+      item
+        Name = 'LATITUDE'
+        ParamType = ptInput
+      end
+      item
+        Name = 'LONGITUDE'
+        ParamType = ptInput
       end>
   end
 end

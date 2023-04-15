@@ -1,11 +1,14 @@
 ﻿program OptimalRoute;
 
+{$R 'Icons.res' 'Icons.rc'}
+
 uses
   Vcl.Forms,
   uFrmMain in 'uFrmMain.pas' {FrmMain},
-  uDbController in 'uDbController.pas' {DbController: TDataModule},
+  uDbController in 'uDbController.pas' {DbModel: TDataModule},
   uMappingTypes in 'uMappingTypes.pas',
-  uMainViewController in 'uMainViewController.pas';
+  uMainViewController in 'uMainViewController.pas',
+  uFrmProgress in 'uFrmProgress.pas' {FrmProgress};
 
 {$R *.res}
 

@@ -24,6 +24,7 @@ type
     Geocoding: TTMSFNCGeocoding;
     btnGeocode: TButton;
     Routing: TTMSFNCRouteCalculator;
+    procedure btnGeocodeClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnMarkerClick(Sender: TObject);
     procedure btnRouteClick(Sender: TObject);
@@ -33,7 +34,7 @@ type
     { Private declarations }
     FSales: TSales;
 
-    FModel: TDbController;
+    FModel: TDbModel;
     FViewController: TMainViewController;
 
     procedure InitForm;
@@ -43,6 +44,7 @@ type
     function GetSelectedSale: TSale;
 
     procedure LocateParticipants;
+    procedure GeocodeParticipants;
 
   public
     { Public declarations }
@@ -58,6 +60,11 @@ uses
   DB;
 
 {$R *.dfm}
+
+procedure TFrmMain.btnGeocodeClick(Sender: TObject);
+begin
+  GeocodeParticipants;
+end;
 
 procedure TFrmMain.FormDestroy(Sender: TObject);
 begin
@@ -82,12 +89,21 @@ end;
 
 procedure TFrmMain.FormCreate(Sender: TObject);
 begin
-  FModel := TDbController.Create(self);
+  FModel := TDbModel.Create(self);
   FViewController := TMainViewController.Create;
 
   FSales := nil;
 
   InitForm;
+end;
+
+procedure TFrmMain.GeocodeParticipants;
+begin
+  FViewController.GeocodeParticipants(
+    SelectedSale.Id,
+    Geocoding,
+    FModel
+    );
 end;
 
 function TFrmMain.GetSelectedSale: TSale;
@@ -136,8 +152,9 @@ end;
 
 procedure TFrmMain.UpdateButtonStates;
 begin
-  btnRoute.Enabled  := SelectedSale <> nil;
-  btnMarker.Enabled := SelectedSale <> nil;
+  btnRoute.Enabled   := SelectedSale <> nil;
+  btnMarker.Enabled  := SelectedSale <> nil;
+  btnGeocode.Enabled := SelectedSale <> nil;
 end;
 
 end.

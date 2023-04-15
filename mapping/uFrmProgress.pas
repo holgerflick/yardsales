@@ -30,6 +30,11 @@ procedure TFrmProgress.Increase;
 begin
   Bar.Position := Bar.Position + 1;
 
+  if Bar.Position = Bar.Max then
+  begin
+    self.Close;
+  end;
+
   Application.ProcessMessages;
 end;
 
