@@ -1,1 +1,2 @@
 SALEPNG RCDATA ".\resources\sale_32.png"
+APIKEY RCDATA ".\resources\googleapikey.txt"

@@ -3,7 +3,7 @@ object FrmMain: TFrmMain
   Top = 0
   Caption = 'FrmMain'
   ClientHeight = 715
-  ClientWidth = 912
+  ClientWidth = 993
   Color = clBtnFace
   Constraints.MinWidth = 850
   Font.Charset = DEFAULT_CHARSET
@@ -16,8 +16,8 @@ object FrmMain: TFrmMain
   TextHeight = 21
   object AdvSplitter1: TAdvSplitter
     Left = 0
-    Top = 523
-    Width = 912
+    Top = 483
+    Width = 993
     Height = 5
     Cursor = crVSplit
     Align = alTop
@@ -29,29 +29,28 @@ object FrmMain: TFrmMain
     Appearance.ColorHotTo = 15917525
     GripStyle = sgDots
     ExplicitTop = 508
+    ExplicitWidth = 912
   end
   object Geocoding: TTMSFNCGeocoding
-    Left = 8
-    Top = 160
+    Left = 784
+    Top = 64
     Width = 26
     Height = 26
     Visible = True
-    APIKey = '***REMOVED***'
     GeocodingRequests = <>
   end
   object Map: TTMSFNCGoogleMaps
     AlignWithMargins = True
     Left = 3
     Top = 148
-    Width = 906
-    Height = 373
+    Width = 987
+    Height = 333
     Margins.Bottom = 2
     Align = alTop
     ParentDoubleBuffered = False
     DoubleBuffered = True
     TabOrder = 1
     OnMapDblClick = MapMapDblClick
-    APIKey = '***REMOVED***'
     Polylines = <>
     Polygons = <>
     Circles = <>
@@ -69,22 +68,24 @@ object FrmMain: TFrmMain
     Clusters = <>
     OverlayViews = <>
     DesigntimeEnabled = False
+    ExplicitLeft = -2
+    ExplicitTop = 150
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 912
+    Width = 993
     Height = 145
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
     DesignSize = (
-      912
+      993
       145)
     object cbSales: TComboBox
       Left = 8
       Top = 16
-      Width = 896
+      Width = 977
       Height = 29
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -125,35 +126,34 @@ object FrmMain: TFrmMain
     object txtHome: TEdit
       Left = 8
       Top = 98
-      Width = 896
+      Width = 977
       Height = 29
+      Anchors = [akLeft, akTop, akRight]
       ReadOnly = True
       TabOrder = 4
       Text = '10611 Chevrolet Way, Estero, FL 33928, USA'
     end
-    object ListView1: TListView
-      Left = 368
-      Top = 136
-      Width = 250
-      Height = 150
-      Columns = <>
+    object btnReportParticipants: TButton
+      Left = 572
+      Top = 51
+      Width = 182
+      Height = 41
+      Caption = 'Report: Participants'
+      Enabled = False
       TabOrder = 5
+      OnClick = btnRouteClick
     end
   end
   object Routes: TListView
     Left = 0
-    Top = 528
-    Width = 912
-    Height = 187
+    Top = 488
+    Width = 993
+    Height = 227
     Align = alClient
     Columns = <>
     HotTrack = True
     ReadOnly = True
     RowSelect = True
     TabOrder = 3
-    ExplicitLeft = 56
-    ExplicitTop = 568
-    ExplicitWidth = 250
-    ExplicitHeight = 150
   end
 end

@@ -3,17 +3,43 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VCL.TMSFNCTypes,
-  VCL.TMSFNCUtils, VCL.TMSFNCGraphics, VCL.TMSFNCGraphicsTypes,
-  VCL.TMSFNCMapsCommonTypes, VCL.TMSFNCCustomControl, VCL.TMSFNCWebBrowser,
-  VCL.TMSFNCMaps,  VCL.TMSFNCCustomComponent, VCL.TMSFNCCloudBase,
-  VCL.TMSFNCGeocoding, VCL.TMSFNCGoogleMaps,
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  VCL.TMSFNCTypes,
+  VCL.TMSFNCUtils,
+  VCL.TMSFNCGraphics,
+  VCL.TMSFNCGraphicsTypes,
+  VCL.TMSFNCMapsCommonTypes,
+  VCL.TMSFNCCustomControl,
+  VCL.TMSFNCWebBrowser,
+  VCL.TMSFNCMaps,
+  VCL.TMSFNCCustomComponent,
+  VCL.TMSFNCCloudBase,
+  VCL.TMSFNCGeocoding,
+  VCL.TMSFNCGoogleMaps,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+
+  AdvSplitter,
+  AdvCustomControl,
+  AdvTreeViewBase,
+  AdvTreeViewData,
+  AdvCustomTreeView,
+  AdvTreeView,
 
   uMappingTypes,
   uDbController,
-  uMainViewController, Vcl.ExtCtrls, AdvSplitter, AdvCustomControl,
-  AdvTreeViewBase, AdvTreeViewData, AdvCustomTreeView, AdvTreeView, Vcl.ComCtrls
+  uMainViewController
   ;
 
 type
@@ -27,8 +53,8 @@ type
     btnMarker: TButton;
     btnRoute: TButton;
     txtHome: TEdit;
-    ListView1: TListView;
     Routes: TListView;
+    btnReportParticipants: TButton;
     procedure btnGeocodeClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnMarkerClick(Sender: TObject);
@@ -55,6 +81,7 @@ type
 
     procedure LocateParticipants;
     procedure GeocodeParticipants;
+    procedure InitFields;
     procedure OptimizeRoute;
 
   public
@@ -68,7 +95,9 @@ var
 implementation
 
 uses
-  DB;
+  DB,
+  uApiKeyLoader
+  ;
 
 {$R *.dfm}
 
@@ -100,11 +129,7 @@ end;
 
 procedure TFrmMain.FormCreate(Sender: TObject);
 begin
-  FModel := TDbModel.Create(self);
-  FViewController := TMainViewController.Create;
-
-  FSales := nil;
-
+  InitFields;
   InitForm;
 end;
 
@@ -126,6 +151,16 @@ begin
   end;
 end;
 
+procedure TFrmMain.InitFields;
+begin
+  FModel := TDbModel.Create(self);
+  FViewController := TMainViewController.Create;
+  FSales := nil;
+
+  Geocoding.APIKey := TApiKeyLoader.GoogleApiKey;
+  Map.APIKey := TApiKeyLoader.GoogleApiKey;
+end;
+
 procedure TFrmMain.InitForm;
 begin
   cbSales.Enabled := False;
@@ -138,7 +173,6 @@ begin
 end;
 
 procedure TFrmMain.LoadSales;
-
 begin
   FSales.Free;
   FSales := FModel.GetSales;
