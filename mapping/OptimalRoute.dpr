@@ -8,7 +8,8 @@ uses
   uDbController in 'uDbController.pas' {DbModel: TDataModule},
   uMappingTypes in 'uMappingTypes.pas',
   uMainViewController in 'uMainViewController.pas',
-  uFrmProgress in 'uFrmProgress.pas' {FrmProgress};
+  uFrmProgress in 'uFrmProgress.pas' {FrmProgress},
+  uApiKeyLoader in 'uApiKeyLoader.pas';
 
 {$R *.res}
 
