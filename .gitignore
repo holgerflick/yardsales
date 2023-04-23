@@ -60,4 +60,4 @@ TMSWebIntermediate
 
 *.user
 
-mapping/resources/GoogleApiKey.txt
+GoogleApiKey.txt
