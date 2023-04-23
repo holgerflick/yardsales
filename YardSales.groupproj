@@ -3,13 +3,13 @@
         <ProjectGuid>{999CFFA3-B9E2-4C76-BCF4-77BE7558D353}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="mapping\MappingAndReporting.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="XDataServer\YardSaleServer.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="WebApplication\participant\ParticipantWebClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="MappingAndReporting\MappingAndReporting.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -20,15 +20,6 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="MappingAndReporting">
-        <MSBuild Projects="mapping\MappingAndReporting.dproj"/>
-    </Target>
-    <Target Name="MappingAndReporting:Clean">
-        <MSBuild Projects="mapping\MappingAndReporting.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="MappingAndReporting:Make">
-        <MSBuild Projects="mapping\MappingAndReporting.dproj" Targets="Make"/>
-    </Target>
     <Target Name="YardSaleServer">
         <MSBuild Projects="XDataServer\YardSaleServer.dproj"/>
     </Target>
@@ -47,14 +38,23 @@
     <Target Name="ParticipantWebClient:Make">
         <MSBuild Projects="WebApplication\participant\ParticipantWebClient.dproj" Targets="Make"/>
     </Target>
+    <Target Name="MappingAndReporting">
+        <MSBuild Projects="MappingAndReporting\MappingAndReporting.dproj"/>
+    </Target>
+    <Target Name="MappingAndReporting:Clean">
+        <MSBuild Projects="MappingAndReporting\MappingAndReporting.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MappingAndReporting:Make">
+        <MSBuild Projects="MappingAndReporting\MappingAndReporting.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MappingAndReporting;YardSaleServer;ParticipantWebClient"/>
+        <CallTarget Targets="YardSaleServer;ParticipantWebClient;MappingAndReporting"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MappingAndReporting:Clean;YardSaleServer:Clean;ParticipantWebClient:Clean"/>
+        <CallTarget Targets="YardSaleServer:Clean;ParticipantWebClient:Clean;MappingAndReporting:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MappingAndReporting:Make;YardSaleServer:Make;ParticipantWebClient:Make"/>
+        <CallTarget Targets="YardSaleServer:Make;ParticipantWebClient:Make;MappingAndReporting:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
