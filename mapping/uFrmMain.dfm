@@ -68,8 +68,6 @@ object FrmMain: TFrmMain
     Clusters = <>
     OverlayViews = <>
     DesigntimeEnabled = False
-    ExplicitLeft = -2
-    ExplicitTop = 150
   end
   object Panel1: TPanel
     Left = 0

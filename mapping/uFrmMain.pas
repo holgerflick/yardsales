@@ -38,7 +38,6 @@ uses
   AdvTreeView,
 
   uMappingTypes,
-  uDbController,
   uMainViewController
   ;
 
@@ -66,16 +65,13 @@ type
         TTMSFNCMapsEventData; ADirectionsData: TTMSFNCGoogleMapsDirectionsData);
   private
     { Private declarations }
-    FSales: TSales;
-
     FLastDirections: TTMSFNCGoogleMapsDirectionsData;
     FHome: TTMSFNCMapsCoordinateRec;
-    FModel: TDbModel;
+
     FViewController: TMainViewController;
 
     procedure InitForm;
 
-    procedure LoadSales;
     procedure UpdateButtonStates;
     function GetSelectedSale: TSale;
 
@@ -109,7 +105,6 @@ end;
 procedure TFrmMain.FormDestroy(Sender: TObject);
 begin
   FViewController.Free;
-  FSales.Free;
 end;
 
 procedure TFrmMain.btnMarkerClick(Sender: TObject);
@@ -137,8 +132,7 @@ procedure TFrmMain.GeocodeParticipants;
 begin
   FViewController.GeocodeParticipants(
     SelectedSale.Id,
-    Geocoding,
-    FModel
+    Geocoding
     );
 end;
 
@@ -153,9 +147,7 @@ end;
 
 procedure TFrmMain.InitFields;
 begin
-  FModel := TDbModel.Create(self);
   FViewController := TMainViewController.Create;
-  FSales := nil;
 
   Geocoding.APIKey := TApiKeyLoader.GoogleApiKey;
   Map.APIKey := TApiKeyLoader.GoogleApiKey;
@@ -169,32 +161,15 @@ begin
 
   Routes.Clear;
 
-  LoadSales;
+  FViewController.LoadSales( cbSales );
 end;
 
-procedure TFrmMain.LoadSales;
-begin
-  FSales.Free;
-  FSales := FModel.GetSales;
-
-  cbSales.Clear;
-
-  for var LSale in FSales do
-  begin
-    cbSales.AddItem(
-      Format( '%d: %s', [ LSale.Id, LSale.Title ] ),
-      LSale );
-  end;
-
-  cbSales.Enabled := cbSales.Items.Count > 0;
-end;
 
 procedure TFrmMain.LocateParticipants;
 begin
   FViewController.AddParticipants(
     SelectedSale.Id,
-    Map,
-    FModel );
+    Map );
 end;
 
 procedure TFrmMain.MapMapDblClick(Sender: TObject; AEventData:
@@ -220,8 +195,7 @@ begin
   FViewController.OptimizeRoute(
     SelectedSale.Id,
     txtHome.Text,
-    Map,
-    FModel );
+    Map );
 end;
 
 procedure TFrmMain.UpdateButtonStates;

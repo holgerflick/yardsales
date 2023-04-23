@@ -3,13 +3,13 @@
         <ProjectGuid>{999CFFA3-B9E2-4C76-BCF4-77BE7558D353}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="server\YardSaleServer.dproj">
+        <Projects Include="mapping\MappingAndReporting.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="webclient\participant\ParticipantWebClient.dproj">
+        <Projects Include="XDataServer\YardSaleServer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="mapping\OptimalRoute.dproj">
+        <Projects Include="WebApplication\participant\ParticipantWebClient.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -20,41 +20,41 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
+    <Target Name="MappingAndReporting">
+        <MSBuild Projects="mapping\MappingAndReporting.dproj"/>
+    </Target>
+    <Target Name="MappingAndReporting:Clean">
+        <MSBuild Projects="mapping\MappingAndReporting.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MappingAndReporting:Make">
+        <MSBuild Projects="mapping\MappingAndReporting.dproj" Targets="Make"/>
+    </Target>
     <Target Name="YardSaleServer">
-        <MSBuild Projects="server\YardSaleServer.dproj"/>
+        <MSBuild Projects="XDataServer\YardSaleServer.dproj"/>
     </Target>
     <Target Name="YardSaleServer:Clean">
-        <MSBuild Projects="server\YardSaleServer.dproj" Targets="Clean"/>
+        <MSBuild Projects="XDataServer\YardSaleServer.dproj" Targets="Clean"/>
     </Target>
     <Target Name="YardSaleServer:Make">
-        <MSBuild Projects="server\YardSaleServer.dproj" Targets="Make"/>
+        <MSBuild Projects="XDataServer\YardSaleServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="ParticipantWebClient">
-        <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj"/>
+        <MSBuild Projects="WebApplication\participant\ParticipantWebClient.dproj"/>
     </Target>
     <Target Name="ParticipantWebClient:Clean">
-        <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj" Targets="Clean"/>
+        <MSBuild Projects="WebApplication\participant\ParticipantWebClient.dproj" Targets="Clean"/>
     </Target>
     <Target Name="ParticipantWebClient:Make">
-        <MSBuild Projects="webclient\participant\ParticipantWebClient.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="OptimalRoute">
-        <MSBuild Projects="mapping\OptimalRoute.dproj"/>
-    </Target>
-    <Target Name="OptimalRoute:Clean">
-        <MSBuild Projects="mapping\OptimalRoute.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="OptimalRoute:Make">
-        <MSBuild Projects="mapping\OptimalRoute.dproj" Targets="Make"/>
+        <MSBuild Projects="WebApplication\participant\ParticipantWebClient.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="YardSaleServer;ParticipantWebClient;OptimalRoute"/>
+        <CallTarget Targets="MappingAndReporting;YardSaleServer;ParticipantWebClient"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="YardSaleServer:Clean;ParticipantWebClient:Clean;OptimalRoute:Clean"/>
+        <CallTarget Targets="MappingAndReporting:Clean;YardSaleServer:Clean;ParticipantWebClient:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="YardSaleServer:Make;ParticipantWebClient:Make;OptimalRoute:Make"/>
+        <CallTarget Targets="MappingAndReporting:Make;YardSaleServer:Make;ParticipantWebClient:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

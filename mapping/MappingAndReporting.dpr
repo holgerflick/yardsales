@@ -1,4 +1,4 @@
-﻿program OptimalRoute;
+﻿program MappingAndReporting;
 
 {$R 'Icons.res' 'Icons.rc'}
 
@@ -9,7 +9,8 @@ uses
   uMappingTypes in 'uMappingTypes.pas',
   uMainViewController in 'uMainViewController.pas',
   uFrmProgress in 'uFrmProgress.pas' {FrmProgress},
-  uApiKeyLoader in 'uApiKeyLoader.pas';
+  uApiKeyLoader in 'uApiKeyLoader.pas',
+  uReportManager in 'uReportManager.pas' {ReportManager: TDataModule};
 
 {$R *.res}
 

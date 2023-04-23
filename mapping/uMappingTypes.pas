@@ -61,6 +61,8 @@ type
     FState: String;
     FCategories: String;
     FLocation: TLocation;
+    function GetAddress: String;
+    function GetNameWithEmail: String;
   public
     constructor Create( AParticipants, ACategories: TDataset );
     destructor Destroy; override;
@@ -74,6 +76,9 @@ type
     property Zip: String read FZip write FZip;
     property City: String read FCity write FCity;
     property State: String read FState write FState;
+
+    property NameWithEmail: String read GetNameWithEmail;
+    property Address: String read GetAddress;
 
     property Categories: String read FCategories write FCategories;
     property Location: TLocation read FLocation write FLocation;
@@ -167,6 +172,21 @@ begin
   FLocation.Free;
 
   inherited;
+end;
+
+function TParticipant.GetAddress: String;
+begin
+  Result :=
+    self.Street + ', ' +
+    self.City + ', ' +
+    self.Street + '  ' +
+    self.Zip
+    ;
+end;
+
+function TParticipant.GetNameWithEmail: String;
+begin
+  Result := Format( '%s (%s)', [ self.Name, self.Email ] );
 end;
 
 procedure TParticipant.TransferFrom( AParticipants, ACategories: TDataset );

@@ -16,6 +16,7 @@ uses
 
   Vcl.Graphics,
   Vcl.ComCtrls,
+  Vcl.StdCtrls,
 
   System.Threading,
   System.RegularExpressions
@@ -25,6 +26,9 @@ type
   TMainViewController = class
   private
     FNeedLocations: TNeedLocations;
+
+    FModel: TDbModel;
+    FSales: TSales;
     FParticipants: TParticipants;
     FProgress:  TFrmProgress;
     FGeocoder: TTMSFNCGeocoding;
@@ -36,23 +40,25 @@ type
     constructor Create;
     destructor Destroy; override;
 
+    procedure LoadSales( AComboBox: TComboBox );
+
     procedure AddParticipants(
       ASalesId: Integer;
-      AMap: TTMSFNCGoogleMaps;
-      AModel: TDbModel
+      AMap: TTMSFNCGoogleMaps
       );
 
     procedure GeocodeParticipants(
       ASalesId: Integer;
-      AGeocoder: TTMSFNCGeocoding;
-      AModel: TDbModel
+      AGeocoder: TTMSFNCGeocoding
     );
 
     procedure OptimizeRoute(ASalesId: Integer; AHome: String;
-        AMap: TTMSFNCGoogleMaps; AModel: TDbModel);
+        AMap: TTMSFNCGoogleMaps);
 
     procedure DisplayRoutes(ARoutes: TListView; ADirectionsData:
         TTMSFNCGoogleMapsDirectionsData);
+
+    procedure PreviewParticipantReport;
 
     property Geocoder: TTMSFNCGeocoding read FGeocoder;
 
@@ -70,7 +76,7 @@ uses
 { TMainViewController }
 
 procedure TMainViewController.AddParticipants(ASalesId: Integer; AMap:
-    TTMSFNCGoogleMaps; AModel: TDbModel);
+    TTMSFNCGoogleMaps);
 var
   LIconDataUrl: String;
 
@@ -78,7 +84,7 @@ begin
   LIconDataUrl := GetDataUrlForSaleIcon;
 
   FParticipants.Free;
-  FParticipants := AModel.GetParticipants(ASalesId);
+  FParticipants := FModel.GetParticipants(ASalesId);
   AMap.BeginUpdate;
   try
     AMap.Clear;
@@ -109,6 +115,8 @@ end;
 
 constructor TMainViewController.Create;
 begin
+  FModel := TDbModel.Create(nil);
+  FSales := nil;
   FParticipants := nil;
   FNeedLocations := nil;
   FProgress := TFrmProgress.Create(nil);
@@ -118,6 +126,8 @@ destructor TMainViewController.Destroy;
 begin
   FProgress.Free;
   FParticipants.Free;
+  FSales.Free;
+  FModel.Free;
   FNeedLocations.Free;
 
   inherited;
@@ -188,7 +198,7 @@ begin
 end;
 
 procedure TMainViewController.GeocodeParticipants(ASalesId: Integer; AGeocoder:
-    TTMSFNCGeocoding; AModel: TDbModel);
+    TTMSFNCGeocoding);
 begin
   if not Assigned( FGeocoder ) then
   begin
@@ -196,7 +206,7 @@ begin
 
     FGeocoder := AGeocoder;
 
-    FNeedLocations := AModel.GetNeedLocations(ASalesId);
+    FNeedLocations := FModel.GetNeedLocations(ASalesId);
 
     FProgress.SetMax(FNeedLocations.Count);
     FProgress.Show;
@@ -253,21 +263,37 @@ begin
   end;
 end;
 
+procedure TMainViewController.LoadSales(AComboBox: TComboBox);
+begin
+  FSales.Free;
+  FSales := FModel.GetSales;
+
+  AComboBox.Clear;
+
+  for var LSale in FSales do
+  begin
+    AComboBox.AddItem(
+      Format( '%d: %s', [ LSale.Id, LSale.Title ] ),
+      LSale );
+  end;
+
+  AComboBox.Enabled := AComboBox.Items.Count > 0;
+end;
+
 procedure TMainViewController.OptimizeRoute(ASalesId: Integer; AHome: String;
-    AMap: TTMSFNCGoogleMaps; AModel: TDbModel);
+    AMap: TTMSFNCGoogleMaps);
 var
   LWaypoints: TStringlist;
 begin
   FParticipants.Free;
-  FParticipants := AModel.GetParticipants(ASalesId);
+  FParticipants := FModel.GetParticipants(ASalesId);
 
   LWayPoints := TStringlist.Create;
   try
     // add all participants as waypoints
     for var LParticipant in FParticipants do
     begin
-      LWaypoints.Add( LParticipant.Street + ',' + LParticipant.City + ',' +
-        LParticipant.State + ' ' + LParticipant.Zip + ', USA' );
+      LWaypoints.Add( LParticipant.Address + ', USA' );
     end;
 
     AMap.AddDirections( AHome, AHome, False, True, clRed, 2, 0.5, dtmDriving,
@@ -276,6 +302,11 @@ begin
   finally
     LWaypoints.Free;
   end;
+end;
+
+procedure TMainViewController.PreviewParticipantReport;
+begin
+  // TODO
 end;
 
 function TMainViewController.StripHtml(AText: String): String;
