@@ -23,12 +23,37 @@ type
     ParticipantLocations: TFDQuery;
     NeedLocation: TFDQuery;
     UpdateLocation: TFDQuery;
+    SalesEventDates: TStringField;
+    ParticipantsCategories: TStringField;
+    SalesId: TFDAutoIncField;
+    SalesEventStart: TDateTimeField;
+    SalesEventEnd: TDateTimeField;
+    SalesTitle: TWideStringField;
+    SalesLogo: TBlobField;
+    SalesThumb: TBlobField;
+    ParticipantsId: TFDAutoIncField;
+    ParticipantsEmail: TWideStringField;
+    ParticipantsSalesId: TLongWordField;
+    ParticipantsName: TWideStringField;
+    ParticipantsStreet: TWideStringField;
+    ParticipantsZip: TWideStringField;
+    ParticipantsCity: TWideStringField;
+    ParticipantsState: TWideStringField;
+    ParticipantsMapUrl: TWideStringField;
+    ParticipantsLongitude: TFloatField;
+    ParticipantsLatitude: TFloatField;
+    ParticipantsCreated: TDateTimeField;
+    ParticipantsAddress: TStringField;
     procedure DataModuleCreate(Sender: TObject);
+    procedure ParticipantsCalcFields(DataSet: TDataSet);
+    procedure SalesCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
     procedure SetupConnection;
   public
     { Public declarations }
+
+    procedure MoveToSalesId( ASalesId: Integer );
 
     function GetSales: TSales;
     function GetParticipants( ASalesId: Integer ): TParticipants;
@@ -36,6 +61,7 @@ type
 
     // called when location is updated
     procedure OnUpdateLocation( Sender: TObject );
+
 
   end;
 
@@ -116,6 +142,11 @@ begin
   end;
 end;
 
+procedure TDbModel.MoveToSalesId(ASalesId: Integer);
+begin
+  Sales.Locate( 'Id', ASalesId, [] );
+end;
+
 procedure TDbModel.OnUpdateLocation(Sender: TObject);
 var
   LLocation: TNeedLocation;
@@ -134,6 +165,58 @@ begin
   finally
     TMonitor.Exit(LQuery);
   end;
+end;
+
+procedure TDbModel.ParticipantsCalcFields(DataSet: TDataSet);
+var
+  LBuffer: String;
+  LBookmark: TBookmark;
+
+begin
+   Dataset.FieldByName('Address').AsString :=
+        Dataset.FieldByName('Street').AsString + ', ' +
+        Dataset.FieldByName('City').AsString;
+
+  Dataset.FieldByName('Categories').AsString := '';
+
+  LBookmark := ParticipantCategories.GetBookmark;
+  try
+    ParticipantCategories.First;
+    while not ParticipantCategories.Eof do
+    begin
+      if not LBuffer.IsEmpty then
+      begin
+        LBuffer := LBuffer + ', ';
+      end;
+
+      LBuffer := LBuffer + ParticipantCategories.FieldByName('Name').AsString;
+
+      ParticipantCategories.Next;
+    end;
+
+    DataSet.FieldByName('Categories').AsString := LBuffer;
+
+
+    ParticipantCategories.GotoBookmark(LBookmark);
+  finally
+    ParticipantCategories.FreeBookmark(LBookmark);
+  end;
+
+end;
+
+procedure TDbModel.SalesCalcFields(DataSet: TDataSet);
+var
+  LBuffer: String;
+
+begin
+  LBuffer := FormatDateTime(
+    'mmmm d, yyyy (ham/pm to ',
+    DataSet.FieldByName('EventStart').AsDateTime );
+  LBuffer := LBuffer + FormatDateTime(
+    'ham/pm)',
+    DataSet.FieldByName('EventEnd').AsDateTime );
+
+  DataSet.FieldByName('EventDates').AsString := LBuffer;
 end;
 
 procedure TDbModel.SetupConnection;

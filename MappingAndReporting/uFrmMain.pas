@@ -57,6 +57,7 @@ type
     procedure btnGeocodeClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnMarkerClick(Sender: TObject);
+    procedure btnReportParticipantsClick(Sender: TObject);
     procedure btnRouteClick(Sender: TObject);
     procedure cbSalesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -79,6 +80,7 @@ type
     procedure GeocodeParticipants;
     procedure InitFields;
     procedure OptimizeRoute;
+    procedure ReportParticipants;
 
   public
     { Public declarations }
@@ -92,7 +94,8 @@ implementation
 
 uses
   DB,
-  uApiKeyLoader
+  uApiKeyLoader,
+  uReportManager
   ;
 
 {$R *.dfm}
@@ -110,6 +113,11 @@ end;
 procedure TFrmMain.btnMarkerClick(Sender: TObject);
 begin
   LocateParticipants;
+end;
+
+procedure TFrmMain.btnReportParticipantsClick(Sender: TObject);
+begin
+  ReportParticipants;
 end;
 
 procedure TFrmMain.btnRouteClick(Sender: TObject);
@@ -198,11 +206,17 @@ begin
     Map );
 end;
 
+procedure TFrmMain.ReportParticipants;
+begin
+  FViewController.PreviewParticipantReport(SelectedSale.Id);
+end;
+
 procedure TFrmMain.UpdateButtonStates;
 begin
   btnRoute.Enabled   := SelectedSale <> nil;
   btnMarker.Enabled  := SelectedSale <> nil;
   btnGeocode.Enabled := SelectedSale <> nil;
+  btnReportParticipants.Enabled := SelectedSale <> nil;
 end;
 
 end.

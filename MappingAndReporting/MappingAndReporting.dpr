@@ -1,6 +1,6 @@
 ﻿program MappingAndReporting;
 
-{$R 'Icons.res' 'Icons.rc'}
+{$R 'Resources.res' 'Resources.rc'}
 
 uses
   Vcl.Forms,

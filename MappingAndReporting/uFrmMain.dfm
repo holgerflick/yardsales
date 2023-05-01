@@ -139,7 +139,7 @@ object FrmMain: TFrmMain
       Caption = 'Report: Participants'
       Enabled = False
       TabOrder = 5
-      OnClick = btnRouteClick
+      OnClick = btnReportParticipantsClick
     end
   end
   object Routes: TListView

@@ -58,7 +58,7 @@ type
     procedure DisplayRoutes(ARoutes: TListView; ADirectionsData:
         TTMSFNCGoogleMapsDirectionsData);
 
-    procedure PreviewParticipantReport;
+    procedure PreviewParticipantReport(ASalesId: Integer);
 
     property Geocoder: TTMSFNCGeocoding read FGeocoder;
 
@@ -70,7 +70,11 @@ uses
   System.SysUtils,
   System.NetEncoding,
   System.Classes,
-  WinApi.Windows
+  WinApi.Windows,
+
+  FlexCel.XlsAdapter,
+
+  uReportManager
   ;
 
 { TMainViewController }
@@ -304,9 +308,22 @@ begin
   end;
 end;
 
-procedure TMainViewController.PreviewParticipantReport;
+procedure TMainViewController.PreviewParticipantReport(ASalesId: Integer);
+var
+  LManager: TReportManager;
+  LXls: TXlsFile;
 begin
-  // TODO
+  FModel.MoveToSalesId( ASalesId );
+
+  LXls := nil;
+  LManager := TReportManager.Create(nil);
+  try
+    LXls := LManager.GetParticipants( FModel.Sales, FModel.Participants, FModel.ParticipantCategories );
+    LXls.Save('f:\report.xlsx');
+  finally
+    LXls.Free;
+    LManager.Free;
+  end;
 end;
 
 function TMainViewController.StripHtml(AText: String): String;
