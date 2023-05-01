@@ -78,10 +78,14 @@ begin
     LReport.SetValue( 'YardSaleEventDates',
       ASale.FieldByName( 'EventDates' ).AsString );
 
+    LReport.SetValue( 'YardSaleThumb', ASale.FieldByName('Logo').AsBytes );
+
     // run report
+    LOutput := TMemoryStream.Create;
     LReport.Run( LTemplate, LOutput );
 
     // create document with report
+    LOutput.Position := 0;
     Result := TXlsFile.Create(LOutput, True);
 
   finally

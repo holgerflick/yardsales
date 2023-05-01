@@ -210,10 +210,9 @@ var
 
 begin
   LBuffer := FormatDateTime(
-    'mmmm d, yyyy (ham/pm to ',
+    'mmmm d, yyyy (h to ',
     DataSet.FieldByName('EventStart').AsDateTime );
-  LBuffer := LBuffer + FormatDateTime(
-    'ham/pm)',
+  LBuffer := LBuffer + FormatDateTime( 'h)',
     DataSet.FieldByName('EventEnd').AsDateTime );
 
   DataSet.FieldByName('EventDates').AsString := LBuffer;

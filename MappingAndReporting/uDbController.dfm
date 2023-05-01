@@ -32,6 +32,7 @@ object DbModel: TDbModel
       FieldName = 'Id'
       Origin = 'Id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object SalesEventStart: TDateTimeField
       FieldName = 'EventStart'
@@ -87,6 +88,7 @@ object DbModel: TDbModel
       FieldName = 'Id'
       Origin = 'Id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object ParticipantsEmail: TWideStringField
       FieldName = 'Email'
