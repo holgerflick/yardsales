@@ -74,7 +74,7 @@ uses
 
   FlexCel.XlsAdapter,
 
-  uReportManager
+  uFrmPreview
   ;
 
 { TMainViewController }
@@ -310,19 +310,14 @@ end;
 
 procedure TMainViewController.PreviewParticipantReport(ASalesId: Integer);
 var
-  LManager: TReportManager;
-  LXls: TXlsFile;
-begin
-  FModel.MoveToSalesId( ASalesId );
+  LFrm: TFrmPreview;
 
-  LXls := nil;
-  LManager := TReportManager.Create(nil);
+begin
   try
-    LXls := LManager.GetParticipants( FModel.Sales, FModel.Participants, FModel.ParticipantCategories );
-    LXls.Save('f:\report.xlsx');
+    LFrm := TFrmPreview.Create( FModel );
+    LFrm.ShowParticipants( ASalesId );
   finally
-    LXls.Free;
-    LManager.Free;
+    LFrm.Free;
   end;
 end;
 

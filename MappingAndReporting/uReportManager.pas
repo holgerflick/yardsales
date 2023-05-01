@@ -12,18 +12,30 @@ uses
   FlexCel.XlsAdapter,
   FlexCel.Report,
 
-  uMappingTypes
+  uDbController
   ;
 
 type
   TReportManager = class(TDataModule)
+    procedure DataModuleDestroy(Sender: TObject);
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    FModel: TDbModel;
+
+    FLastReport: TXlsFile;
+
     procedure LoadTemplate( AName: String; ATemplate: TStream );
+
   public
     { Public declarations }
+    constructor Create( AOwner: TComponent; AModel: TDbModel ); reintroduce;
 
-    function GetParticipants(ASale, AParticipants, ACategories: TDataSet): TXlsFile;
+
+    procedure ReportParticipants(ASaleId: Integer);
+
+    property LastReport: TXlsFile read FLastReport;
+
   end;
 
 implementation
@@ -38,27 +50,52 @@ resourcestring
 
 {$R *.dfm}
 
+procedure TReportManager.DataModuleDestroy(Sender: TObject);
+begin
+  FLastReport.Free;
+end;
+
+constructor TReportManager.Create(AOwner: TComponent; AModel: TDbModel);
+begin
+  inherited Create( AOwner );
+
+  FModel := AModel;
+end;
+
+procedure TReportManager.DataModuleCreate(Sender: TObject);
+begin
+  FLastReport := nil;
+end;
+
 { TReportManager }
 
-function TReportManager.GetParticipants(ASale, AParticipants, ACategories:
-    TDataSet): TXlsFile;
+procedure TReportManager.ReportParticipants(ASaleId: Integer);
 var
   LBmParticipants: TBookmark;
   LTemplate: TMemoryStream;
   LReport : TFlexCelReport;
   LOutput: TMemoryStream;
 
+  LCategories,
+  LParticipants,
+  LSale: TDataSet;
+
 begin
-  Result := nil;
+  LCategories := FModel.ParticipantCategories;
+  LParticipants := FModel.Participants;
+  LSale := FModel.Sales;
+
+  FModel.MoveToSalesId( ASaleId );
+
   LTemplate := nil;
   LReport := nil;
   LOutput := nil;
   try
-    ACategories.Open;
-    AParticipants.Open;
+    LCategories.Open;
+    LParticipants.Open;
 
-    LBmParticipants := AParticipants.GetBookmark;
-    AParticipants.First;
+    LBmParticipants := LParticipants.GetBookmark;
+    LParticipants.First;
 
     // set up template
     LTemplate := TMemoryStream.Create;
@@ -68,17 +105,18 @@ begin
     LReport := TFlexCelReport.Create( true );
 
     // link tables to report
-    LReport.AddTable( 'P', AParticipants );
+    LReport.AddTable( 'P', LParticipants );
 
     // set header
     LReport.SetValue( 'YardSaleTitle',
-      ASale.FieldByName( 'Title' ).AsString );
+      LSale.FieldByName( 'Title' ).AsString );
 
     // use calculated field to display date and time of event
     LReport.SetValue( 'YardSaleEventDates',
-      ASale.FieldByName( 'EventDates' ).AsString );
+      LSale.FieldByName( 'EventDates' ).AsString );
 
-    LReport.SetValue( 'YardSaleThumb', ASale.FieldByName('Logo').AsBytes );
+    LReport.SetValue( 'YardSaleThumb',
+      LSale.FieldByName('Logo').AsBytes );
 
     // run report
     LOutput := TMemoryStream.Create;
@@ -86,11 +124,12 @@ begin
 
     // create document with report
     LOutput.Position := 0;
-    Result := TXlsFile.Create(LOutput, True);
 
+    FLastReport.Free;
+    FLastReport := TXlsFile.Create( LOutput, True );
   finally
-    AParticipants.GotoBookmark( LBmParticipants );
-    AParticipants.FreeBookmark( LBmParticipants );
+    LParticipants.GotoBookmark( LBmParticipants );
+    LParticipants.FreeBookmark( LBmParticipants );
 
     LReport.Free;
     LTemplate.Free;
