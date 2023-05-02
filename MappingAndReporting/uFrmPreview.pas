@@ -99,7 +99,7 @@ begin
   inherited Create( nil );
 
   FModel := AModel;
-  FManager := TReportManager.Create( nil, FModel );
+  FManager := TReportManager.Create( nil, FModel.Connection );
 
   UpdateToolbar;
 

@@ -12,24 +12,52 @@ uses
   FlexCel.XlsAdapter,
   FlexCel.Report,
 
-  uDbController
+  uDbController, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client
   ;
 
 type
   TReportManager = class(TDataModule)
+    Sale: TFDQuery;
+    SaleEventDates: TStringField;
+    SaleId: TFDAutoIncField;
+    SaleEventStart: TDateTimeField;
+    SaleEventEnd: TDateTimeField;
+    SaleTitle: TWideStringField;
+    SaleLogo: TBlobField;
+    SaleThumb: TBlobField;
+    Participants: TFDQuery;
+    ParticipantsCategories: TStringField;
+    ParticipantsId: TFDAutoIncField;
+    ParticipantsEmail: TWideStringField;
+    ParticipantsSalesId: TLongWordField;
+    ParticipantsName: TWideStringField;
+    ParticipantsStreet: TWideStringField;
+    ParticipantsZip: TWideStringField;
+    ParticipantsCity: TWideStringField;
+    ParticipantsState: TWideStringField;
+    ParticipantsMapUrl: TWideStringField;
+    ParticipantsLongitude: TFloatField;
+    ParticipantsLatitude: TFloatField;
+    ParticipantsCreated: TDateTimeField;
+    ParticipantsAddress: TStringField;
+    ParticipantCategories: TFDQuery;
+    sourceParticipants: TDataSource;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
+    procedure ParticipantsCalcFields(DataSet: TDataSet);
+    procedure SaleCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
-    FModel: TDbModel;
-
     FLastReport: TXlsFile;
+    FConnection: TFDConnection;
 
     procedure LoadTemplate( AName: String; ATemplate: TStream );
 
   public
     { Public declarations }
-    constructor Create( AOwner: TComponent; AModel: TDbModel ); reintroduce;
+    constructor Create(AOwner: TComponent; AConnection: TFDConnection); reintroduce;
 
 
     procedure ReportParticipants(ASaleId: Integer);
@@ -55,11 +83,14 @@ begin
   FLastReport.Free;
 end;
 
-constructor TReportManager.Create(AOwner: TComponent; AModel: TDbModel);
+constructor TReportManager.Create(AOwner: TComponent; AConnection: TFDConnection);
 begin
   inherited Create( AOwner );
 
-  FModel := AModel;
+  FConnection := AConnection;
+  Sale.Connection := FConnection;
+  Participants.Connection := FConnection;
+  ParticipantCategories.Connection := FConnection;
 end;
 
 procedure TReportManager.DataModuleCreate(Sender: TObject);
@@ -71,30 +102,26 @@ end;
 
 procedure TReportManager.ReportParticipants(ASaleId: Integer);
 var
-  LBmParticipants: TBookmark;
   LTemplate: TMemoryStream;
   LReport : TFlexCelReport;
   LOutput: TMemoryStream;
 
-  LCategories,
   LParticipants,
-  LSale: TDataSet;
+  LSale: TFDQuery;
 
 begin
-  LCategories := FModel.ParticipantCategories;
-  LParticipants := FModel.Participants;
-  LSale := FModel.Sales;
+  LParticipants := Participants;
+  LSale := Sale;
+  LSale.ParamByName('id').AsInteger := ASaleId;
+  LSale.Open;
 
-  FModel.MoveToSalesId( ASaleId );
+  LParticipants.ParamByName('SalesId').AsInteger := ASaleId;
+  LParticipants.Open;
 
   LTemplate := nil;
   LReport := nil;
   LOutput := nil;
   try
-    LCategories.Open;
-    LParticipants.Open;
-
-    LBmParticipants := LParticipants.GetBookmark;
     LParticipants.First;
 
     // set up template
@@ -128,8 +155,8 @@ begin
     FLastReport.Free;
     FLastReport := TXlsFile.Create( LOutput, True );
   finally
-    LParticipants.GotoBookmark( LBmParticipants );
-    LParticipants.FreeBookmark( LBmParticipants );
+    LParticipants.Close;
+    LSale.Close;
 
     LReport.Free;
     LTemplate.Free;
@@ -151,6 +178,52 @@ begin
   finally
     LResourceStream.Free;
   end;
+end;
+
+procedure TReportManager.ParticipantsCalcFields(DataSet: TDataSet);
+var
+  LBuffer: String;
+
+begin
+   Dataset.FieldByName('Address').AsString :=
+        Dataset.FieldByName('Street').AsString + ', ' +
+        Dataset.FieldByName('City').AsString;
+
+   ParticipantCategories.Close;
+   ParticipantCategories.Open;
+
+
+  LBuffer := '';
+
+  ParticipantCategories.First;
+  while not ParticipantCategories.Eof do
+  begin
+    if not LBuffer.IsEmpty then
+    begin
+      LBuffer := LBuffer + ', ';
+    end;
+
+    LBuffer := LBuffer + ParticipantCategories.FieldByName('Name').AsString;
+
+    ParticipantCategories.Next;
+  end;
+
+  DataSet.FieldByName('Categories').AsString := LBuffer;
+
+end;
+
+procedure TReportManager.SaleCalcFields(DataSet: TDataSet);
+var
+  LBuffer: String;
+
+begin
+  LBuffer := FormatDateTime(
+    'mmmm d, yyyy (h to ',
+    DataSet.FieldByName('EventStart').AsDateTime );
+  LBuffer := LBuffer + FormatDateTime( 'h)',
+    DataSet.FieldByName('EventEnd').AsDateTime );
+
+  DataSet.FieldByName('EventDates').AsString := LBuffer;
 end;
 
 end.

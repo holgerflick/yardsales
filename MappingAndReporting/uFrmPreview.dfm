@@ -43,7 +43,7 @@ object FrmPreview: TFrmPreview
     object AdvToolBar1: TAdvToolBar
       Left = 3
       Top = 1
-      Width = 163
+      Width = 618
       Height = 54
       UIStyle = tsOffice2019White
       AllowFloating = False
