@@ -3,6 +3,7 @@
 interface
 
 uses
+  System.Classes,
   System.SysUtils,
 
   XData.Server.Module,
@@ -23,6 +24,8 @@ type
     function GetParticipants( ASaleId: Integer ): TDetailedParticipants;
     function GetParticipantCategories(
       AParticipantId: Integer ): TParticipantCategories;
+
+    function GetParticipantsReport( ASaleId: Integer ): TStream;
   end;
 
 implementation
@@ -35,7 +38,8 @@ uses
   FireDAC.Comp.Client,
   uFDCustomQueryHelper,
   uAdminSqlManager,
-  Classes,
+  uReportManager,
+
   DB
   ;
 
@@ -111,6 +115,29 @@ begin
     end;
   finally
     LQuery.ReturnToPool;
+  end;
+end;
+
+function TAdminManager.GetParticipantsReport(ASaleId: Integer): TStream;
+var
+  LCon: TFDConnection;
+  LManager: TReportManager;
+
+begin
+  Result := TMemoryStream.Create;
+  TXDataOperationContext.Current.Handler.ManagedObjects.Add(Result);
+
+  LCon := TDbController.Shared.GetConnection;
+  try
+    LManager := TReportManager.Create( nil, LCon );
+    try
+      LManager.ReportParticipants(ASaleId);
+      LManager.CreateLastReportPdf(Result);
+    finally
+      LManager.Free;
+    end;
+  finally
+    LCon.Free;
   end;
 end;
 

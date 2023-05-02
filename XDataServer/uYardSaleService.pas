@@ -9,7 +9,6 @@ uses
 
   System.Classes,
   System.SysUtils
-
   ;
 
 type
@@ -24,7 +23,6 @@ type
     function GetYardSale( SaleId: Integer ): TYardSale;
 
     // --- Participant operations
-
     [Authorize]
     procedure UpdateParticipant( Participant: TUpdateParticipant );
 
@@ -34,6 +32,8 @@ type
     function ItemCategories( SortOrder:TItemCategorySortOrder ) : TItemCategories;
 
     // --- Admin operations
+    // [Authorize]
+    [HttpGet] function GetParticipantsReportPdf( SaleId: Integer ): TStream;
 
     [Authorize]
     function GetYardSales: TYardSales;

@@ -105,10 +105,14 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="uApiKeyLoader.pas"/>
-        <DCCReference Include="uReportManager.pas">
+        <DCCReference Include="..\Shared\uReportManager.pas">
             <Form>ReportManager</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="uFrmPreview.pas">
+            <Form>FrmPreview</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

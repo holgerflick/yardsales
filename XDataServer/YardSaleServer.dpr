@@ -1,5 +1,7 @@
 ﻿program YardSaleServer;
 
+{$R 'Resources.res' 'Resources.rc'}
+
 uses
   Vcl.Forms,
   uServerContainer in 'uServerContainer.pas' {ServerContainer: TDataModule},
@@ -15,7 +17,8 @@ uses
   uParticipantSqlManager in 'uParticipantSqlManager.pas',
   uAdminManager in 'uAdminManager.pas',
   uAdminSqlManager in 'uAdminSqlManager.pas',
-  uBitmapTools in 'uBitmapTools.pas';
+  uBitmapTools in 'uBitmapTools.pas',
+  uReportManager in '..\Shared\uReportManager.pas' {ReportManager: TDataModule};
 
 {$R *.res}
 

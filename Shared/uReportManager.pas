@@ -9,12 +9,25 @@ uses
   Data.DB,
 
   Vcl.FlexCel.Core,
+
   FlexCel.XlsAdapter,
   FlexCel.Report,
+  FlexCel.Pdf,
+  FlexCel.Render,
 
-  uDbController, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
-  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client
+  uDbController,
+
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Error,
+  FireDAC.DatS,
+  FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf,
+  FireDAC.Stan.Async,
+  FireDAC.DApt,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client
   ;
 
 type
@@ -55,14 +68,16 @@ type
 
     procedure LoadTemplate( AName: String; ATemplate: TStream );
 
+
   public
     { Public declarations }
     constructor Create(AOwner: TComponent; AConnection: TFDConnection); reintroduce;
 
-
+    procedure CreateLastReportPdf( APdf: TStream );
     procedure ReportParticipants(ASaleId: Integer);
 
     property LastReport: TXlsFile read FLastReport;
+
 
   end;
 
@@ -91,6 +106,22 @@ begin
   Sale.Connection := FConnection;
   Participants.Connection := FConnection;
   ParticipantCategories.Connection := FConnection;
+end;
+
+procedure TReportManager.CreateLastReportPdf(APdf: TStream);
+var
+  LExport: TFlexCelPdfExport;
+
+begin
+  if Assigned(FLastReport) then
+  begin
+    LExport := TFlexCelPdfExport.Create(FLastReport);
+    try
+      LExport.Export(APdf);
+    finally
+      LExport.Free;
+    end;
+  end;
 end;
 
 procedure TReportManager.DataModuleCreate(Sender: TObject);

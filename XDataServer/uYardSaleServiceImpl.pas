@@ -31,6 +31,7 @@ type
     function ItemCategories( SortOrder: TItemCategorySortOrder ): TItemCategories;
 
     // --- Admin
+    function GetParticipantsReportPdf( SaleId: Integer ): TStream;
     function GetYardSales: TYardSales;
     function GetYardSaleLogo( SaleId: Integer; Width, Height: Integer ): TBytes;
     function GetParticipants( SaleId: Integer ): TDetailedParticipants;
@@ -105,6 +106,20 @@ begin
   LManager := TAdminManager.Create;
   try
     Result := LManager.GetParticipants(SaleId);
+  finally
+    LManager.Free;
+  end;
+end;
+
+function TYardSaleService.GetParticipantsReportPdf(SaleId: Integer): TStream;
+var
+  LManager: TAdminManager;
+
+begin
+  LManager := TAdminManager.Create;
+  try
+    Result := LManager.GetParticipantsReport(SaleId);
+
   finally
     LManager.Free;
   end;

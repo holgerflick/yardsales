@@ -10,7 +10,8 @@ uses
   uMainViewController in 'uMainViewController.pas',
   uFrmProgress in 'uFrmProgress.pas' {FrmProgress},
   uApiKeyLoader in 'uApiKeyLoader.pas',
-  uReportManager in 'uReportManager.pas' {ReportManager: TDataModule};
+  uReportManager in '..\Shared\uReportManager.pas' {ReportManager: TDataModule},
+  uFrmPreview in 'uFrmPreview.pas' {FrmPreview};
 
 {$R *.res}
 

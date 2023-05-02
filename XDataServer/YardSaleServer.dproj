@@ -86,6 +86,9 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <RcCompile Include="Resources.rc">
+            <Form>Resources.res</Form>
+        </RcCompile>
         <DCCReference Include="uServerContainer.pas">
             <Form>ServerContainer</Form>
             <FormType>dfm</FormType>
@@ -111,6 +114,11 @@
         <DCCReference Include="uAdminManager.pas"/>
         <DCCReference Include="uAdminSqlManager.pas"/>
         <DCCReference Include="uBitmapTools.pas"/>
+        <DCCReference Include="..\Shared\uReportManager.pas">
+            <Form>ReportManager</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
