@@ -24,7 +24,7 @@ object ServerContainer: TServerContainer
       OnGetSecret = ServerJWTGetSecret
     end
     object XDataServerCORS: TSparkleCorsMiddleware
-      Origin = 'https://webdev.flixengineering.freemyip.com'
+      Origin = '*'
     end
   end
 end

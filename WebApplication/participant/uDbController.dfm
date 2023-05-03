@@ -8,7 +8,7 @@ object DbController: TDbController
     Top = 64
   end
   object Connection: TXDataWebConnection
-    URL = 'https://yardsales.flixengineering.freemyip.com'
+    URL = 'http://localhost:2011'
     OnConnect = ConnectionConnect
     OnError = ConnectionError
     Left = 104
