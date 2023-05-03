@@ -57,6 +57,7 @@ TMSWebIntermediate
 *.tar.gz
 .git
 .svn
+*.bmp
 
 *.user
 
