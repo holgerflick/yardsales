@@ -8,7 +8,7 @@ object DbController: TDbController
     Top = 64
   end
   object Connection: TXDataWebConnection
-    URL = 'http://localhost:2011'
+    URL = 'http://192.168.0.58:2011'
     OnConnect = ConnectionConnect
     OnError = ConnectionError
     Left = 104

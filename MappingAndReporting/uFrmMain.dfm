@@ -1,7 +1,7 @@
 object FrmMain: TFrmMain
   Left = 0
   Top = 0
-  Caption = 'FrmMain'
+  Caption = 'YardSale Desktop Manager'
   ClientHeight = 715
   ClientWidth = 993
   Color = clBtnFace

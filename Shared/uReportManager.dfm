@@ -1,8 +1,8 @@
 object ReportManager: TReportManager
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Height = 480
-  Width = 640
+  Height = 228
+  Width = 411
   object Sale: TFDQuery
     ActiveStoredUsage = []
     OnCalcFields = SaleCalcFields
@@ -61,7 +61,7 @@ object ReportManager: TReportManager
       'SELECT * FROM SalesParticipant P  '
       '  LEFT JOIN Locations L ON L.Id = P.Id'
       '  WHERE SalesId = :SalesId')
-    Left = 144
+    Left = 120
     Top = 48
     ParamData = <
       item
