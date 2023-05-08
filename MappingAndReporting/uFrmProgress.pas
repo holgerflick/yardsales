@@ -16,7 +16,6 @@ type
 
     procedure SetMax( AValue: Integer );
     procedure Increase;
-
   end;
 
 

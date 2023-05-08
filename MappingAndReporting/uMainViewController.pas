@@ -85,16 +85,22 @@ var
   LIconDataUrl: String;
 
 begin
+  // get data url
   LIconDataUrl := GetDataUrlForSaleIcon;
 
+  // get all participants for the sale
   FParticipants.Free;
   FParticipants := FModel.GetParticipants(ASalesId);
+
   AMap.BeginUpdate;
   try
+    // clear map
     AMap.Clear;
 
+    // iterate all participants
     for var LParticipant in FParticipants do
     begin
+      // only add marker if location has been added
       if Assigned( LParticipant.Location ) then
       begin
         var LMarker := AMap.AddMarker(
@@ -103,13 +109,18 @@ begin
           LParticipant.Name
           );
 
+        // assign the object instance
         LMarker.DataObject := LParticipant;
+
+        // assign custom icon
         LMarker.IconURL := LIconDataUrl;
       end;
     end;
 
+    // if at least one marker exists
     if AMap.Markers.Count > 0 then
     begin
+      // zoom in and change view to area of interest
       AMap.ZoomToBounds( AMap.Markers.ToCoordinateArray );
     end;
   finally

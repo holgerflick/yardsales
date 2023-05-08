@@ -56,7 +56,6 @@ type
     [async]
     procedure SendNewParticipant( ANewParticipant: TNewParticipant );
 
-
     [async]
     procedure RequestYardSaleDetails( ASaleId: Integer );
 

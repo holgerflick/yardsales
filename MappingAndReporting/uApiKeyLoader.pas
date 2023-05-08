@@ -36,7 +36,6 @@ begin
     LResourceStr.Free;
     LStringStr.Free;
   end;
-
 end;
 
 end.

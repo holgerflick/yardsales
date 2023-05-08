@@ -58,7 +58,6 @@ type
     property Zip: String read FZip write FZip;
     property City: String read FCity write FCity;
     property State: String read FState write FState;
-
   end;
 
   TUpdateParticipant = class
@@ -192,7 +191,6 @@ begin
       // assign thumbnail
       self.Logo := LThumb;
     end;
-
 end;
 
 end.

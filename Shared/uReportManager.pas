@@ -84,7 +84,8 @@ type
 implementation
 
 uses
-  WinApi.Windows;
+  WinApi.Windows,
+  DateUtils;
 
 resourcestring
   cTemplateParticipants = 'PARTICIPANTS';
@@ -240,19 +241,28 @@ begin
   end;
 
   DataSet.FieldByName('Categories').AsString := LBuffer;
-
 end;
 
 procedure TReportManager.SaleCalcFields(DataSet: TDataSet);
 var
   LBuffer: String;
-
+  LLocalStart,
+  LLocalEnd : TDateTime;
 begin
+  LLocalStart :=
+    TTimeZone.Local.ToLocalTime(
+      DataSet.FieldByName('EventStart').AsDateTime
+    );
+
+  LLocalEnd :=
+    TTimeZone.Local.ToLocalTime(
+      DataSet.FieldByName('EventEnd').AsDateTime
+    );
+
   LBuffer := FormatDateTime(
-    'mmmm d, yyyy (t ',
-    DataSet.FieldByName('EventStart').AsDateTime );
-  LBuffer := LBuffer + FormatDateTime( 't)',
-    DataSet.FieldByName('EventEnd').AsDateTime );
+    'mmmm d, yyyy (t ', LLocalStart
+     );
+  LBuffer := LBuffer + FormatDateTime( 't)', LLocalEnd );
 
   DataSet.FieldByName('EventDates').AsString := LBuffer;
 end;
